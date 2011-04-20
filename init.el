@@ -7,10 +7,6 @@
   (if (file-exists-p user-bin)
       (push user-bin exec-path)))
 
-;;
-;; packages
-;;
-
 ;; 
 ;; init el-get, installing if necessary
 ;; 
@@ -36,7 +32,7 @@
   "\\([^.].*?\\)-\\([0-9]+\\(?:[.][0-9]+\\|\\(?:pre\\|beta\\|alpha\\)[0-9]+\\)*\\)")
 
 ;;
-;; things to install
+;; packages
 ;;
 
 (setq el-get-sources
@@ -175,8 +171,7 @@
     (load "color-theme-miami-vice")
     (color-theme-miami-vice)
     (modify-frame-parameters (selected-frame)
-                             (list (cons 'cursor-type 'hollow)))
-    (menu-bar-mode 1)))
+                             (list (cons 'cursor-type 'hollow)))))
 
 ;; 
 ;; os x specific
@@ -187,7 +182,8 @@
     (setq grep-find-use-xargs 'exec)
     (setq ispell-program-name "aspell")
     (add-to-list 'exec-path "/usr/local/bin")
-    (setq magit-git-executable "/usr/local/bin/git")))
+    (setq magit-git-executable "/usr/local/bin/git")
+    (menu-bar-mode 1)))
 
 ;; 
 ;; change font size
