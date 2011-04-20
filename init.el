@@ -37,8 +37,8 @@
 
 (setq el-get-sources
       '(el-get
-        color-theme
         elein
+        color-theme
         auto-complete
         ac-dabbrev
         ac-slime
@@ -75,7 +75,9 @@
                         (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
                         (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
                         (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
-                        (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))))
+                        (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
+                        ;; a binding that works in the terminal
+                        (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
         (:name slime-repl :type elpa)
         (:name clojure-mode :type elpa)
@@ -95,7 +97,8 @@
                                         (lambda (x)
                                           (and (not (string-match-p re x)) x)) lst)))))
                           ;; remove built-in org-mode from load-path
-                          (setq load-path (funcall re-filter-list "org$" load-path)))))
+                          (setq load-path (funcall re-filter-list "org$" load-path))
+                          (define-key global-map "\C-ca" 'org-agenda))))
 
         ;; stuff from tailrecursion repo
         (:name color-theme-miami-vice :type elpa)
