@@ -40,7 +40,6 @@
         color-theme
         elein
         auto-complete
-        smart-tab
         ac-dabbrev
         ac-slime
         hl-sexp
@@ -63,6 +62,10 @@
                         (require 'fuzzy-format)
                         (setq fuzzy-format-default-indent-tabs-mode nil)
                         (global-fuzzy-format-mode t)))
+
+        (:name smart-tab
+               :after (lambda ()
+                        (global-smart-tab-mode 1)))
 
         (:name magit
                :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
@@ -171,7 +174,8 @@
     (load "color-theme-miami-vice")
     (color-theme-miami-vice)
     (modify-frame-parameters (selected-frame)
-                             (list (cons 'cursor-type 'hollow)))))
+                             (list (cons 'cursor-type 'hollow)))
+    (menu-bar-mode 0)))
 
 ;; 
 ;; os x specific
@@ -203,6 +207,9 @@
                       :height
                       (floor (* 0.9
                                 (face-attribute 'default :height)))))
+;;
+;; key bindings
+;;
 
 (global-set-key (kbd "C-+") 'increase-font-size)
 (global-set-key (kbd "C--") 'decrease-font-size)
