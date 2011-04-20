@@ -90,15 +90,26 @@
                :type elpa
                :repo ("gnu-elpa" . "http://elpa.gnu.org/packages/")
                :after (lambda ()
+                        ;; remove built-in org-mode from load-path
                         (let ((re-filter-list
                                (lambda (re lst)
                                  (delq nil
                                        (mapcar
                                         (lambda (x)
                                           (and (not (string-match-p re x)) x)) lst)))))
-                          ;; remove built-in org-mode from load-path
-                          (setq load-path (funcall re-filter-list "org$" load-path))
-                          (define-key global-map "\C-ca" 'org-agenda))))
+                          (setq load-path (funcall re-filter-list "org$" load-path)))
+
+                        ;; org keys, visual
+                        (define-key global-map "\C-ca" 'org-agenda)
+                        (setq org-hide-leading-stars t)
+                        (setq org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
+
+                        ;; configure mobile org
+                        ;; see http://mobileorg.ncogni.to/doc/getting-started/using-dropbox/
+                        (setq org-directory "~/Dropbox/Documents/Alan/org")
+                        (setq org-agenda-files '("~/Dropbox/Documents/Alan/org/agenda.org"))
+                        (setq org-mobile-directory "~/Dropbox/MobileOrg")
+                        (setq org-mobile-inbox-for-pull "~/Dropbox/inbox.org")))
 
         ;; stuff from tailrecursion repo
         (:name color-theme-miami-vice :type elpa)
@@ -106,6 +117,7 @@
 
 (el-get)
 
+;;; set ~/.emacs.d/custom.el as custom-file, creating if necessary
 (let ((user-custom-file "~/.emacs.d/custom.el"))
   (if (not (file-exists-p user-custom-file))
       (shell-command (concat "touch " user-custom-file)))
@@ -120,11 +132,12 @@
 (line-number-mode 1)			  ; have line numbers and
 (column-number-mode 1)			  ; column numbers in the mode line
 (tool-bar-mode -1)			  ; no tool bar with icons
-(scroll-bar-mode -1)			  ; no scroll bars
 (global-linum-mode 1)			  ; add line numbers on the left
 (setq initial-scratch-message nil)        ; empty scratch buffer
 (setq truncate-partial-width-windows nil) ; wrap lines for vertically split windows
 (highlight-symbol-mode 1)
+(load "color-theme-miami-vice")
+(color-theme-miami-vice)
 
 ;; 
 ;; quirk fixes, behaviors
@@ -140,8 +153,6 @@
 (delete-selection-mode t)                          ; typed text replaces active selection
 (blink-cursor-mode t)
 (show-paren-mode t)
-(set-fringe-style -1)
-(tooltip-mode -1)
 (auto-compression-mode t)
 (recentf-mode 1)
 (setq diff-switches "-u -w"
@@ -174,8 +185,9 @@
 
 (when window-system
   (progn
-    (load "color-theme-miami-vice")
-    (color-theme-miami-vice)
+    (set-fringe-style -1)
+    (tooltip-mode -1)
+    (scroll-bar-mode -1)			  ; no scroll bars
     (modify-frame-parameters (selected-frame)
                              (list (cons 'cursor-type 'hollow)))
     (menu-bar-mode 0)))
@@ -190,7 +202,9 @@
     (setq ispell-program-name "aspell")
     (add-to-list 'exec-path "/usr/local/bin")
     (setq magit-git-executable "/usr/local/bin/git")
-    (menu-bar-mode 1)))
+    (when window-system
+      (menu-bar-mode 1)
+      (set-frame-font "Menlo-16"))))
 
 ;; 
 ;; change font size
