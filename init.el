@@ -97,19 +97,7 @@
                                        (mapcar
                                         (lambda (x)
                                           (and (not (string-match-p re x)) x)) lst)))))
-                          (setq load-path (funcall re-filter-list "org$" load-path)))
-
-                        ;; org keys, visual
-                        (define-key global-map "\C-ca" 'org-agenda)
-                        (setq org-hide-leading-stars t)
-                        (setq org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
-
-                        ;; configure mobile org
-                        ;; see http://mobileorg.ncogni.to/doc/getting-started/using-dropbox/
-                        (setq org-directory "~/Dropbox/Documents/Alan/org")
-                        (setq org-agenda-files '("~/Dropbox/Documents/Alan/org/agenda.org"))
-                        (setq org-mobile-directory "~/Dropbox/MobileOrg")
-                        (setq org-mobile-inbox-for-pull "~/Dropbox/inbox.org")))
+                          (setq load-path (funcall re-filter-list "org$" load-path)))))
 
         ;; stuff from tailrecursion repo
         (:name color-theme-miami-vice :type elpa)
@@ -178,6 +166,21 @@
       (find-file file))))
 
 (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
+
+;;
+;; org settings
+;;
+
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-hide-leading-stars t)
+(setq org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
+
+;;; configure mobile org
+;;; see http://mobileorg.ncogni.to/doc/getting-started/using-dropbox/
+(setq org-directory "~/Dropbox/Documents/Alan/org")
+(setq org-agenda-files '("~/Dropbox/Documents/Alan/org/agenda.org"))
+(setq org-mobile-directory "~/Dropbox/MobileOrg")
+(setq org-mobile-inbox-for-pull "~/Dropbox/inbox.org")
 
 ;; 
 ;; window-system specific
