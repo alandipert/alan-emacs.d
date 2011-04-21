@@ -40,22 +40,20 @@
         elein
         color-theme
         auto-complete
-        ac-dabbrev
         ac-slime
         hl-sexp
         highlight-symbol
         highlight-parentheses
         yasnippet
         markdown-mode
+        swank-clojure
 
         (:name package24
                :after (lambda ()
-                        (setq package-archives
-                              (concatenate
-                               'list
-                               package-archives
-                               '(("marmalade" . "http://marmalade-repo.org/packages/")
-                                 ("tailrecursion" . "http://repo.tailrecursion.com/emacs/"))))))
+                        (add-to-list 'package-archives
+                                     '("marmalade" . "http://marmalade-repo.org/packages/"))
+                        (add-to-list 'package-archives
+                                     '("tailrecursion" . "http://repo.tailrecursion.com/emacs/"))))
 
         (:name fuzzy-format
                :after (lambda ()
@@ -79,24 +77,25 @@
                         ;; a binding that works in the terminal
                         (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
-        (:name slime-repl :type elpa)
         (:name clojure-mode :type elpa)
         (:name durendal :after (lambda () (durendal-enable)))
 
-        swank-clojure
+        (:name org-mode
+               :type git
+               :url "git://orgmode.org/org-mode.git"
+               :info "doc"
+               :build `,(mapcar
+                         (lambda (target)
+                           (concat "make " target " EMACS=" el-get-emacs))
+                         '("clean" "all"))
+               :load-path ("lisp" "contrib/lisp")
+               :autoloads nil
+               :features org-install)
 
-        (:name org
-               :type elpa
-               :repo ("gnu-elpa" . "http://elpa.gnu.org/packages/")
+        (:name slime
                :after (lambda ()
-                        ;; remove built-in org-mode from load-path
-                        (let ((re-filter-list
-                               (lambda (re lst)
-                                 (delq nil
-                                       (mapcar
-                                        (lambda (x)
-                                          (and (not (string-match-p re x)) x)) lst)))))
-                          (setq load-path (funcall re-filter-list "org$" load-path)))))
+                        (setq slime-protocol-version 'ignore)))
+        (:name slime-repl :type elpa)
 
         ;; stuff from tailrecursion repo
         (:name color-theme-miami-vice :type elpa)
@@ -115,13 +114,13 @@
 ;; visual settings
 ;; 
 
-(setq inhibit-splash-screen t)
-(line-number-mode 1)			  ; have line numbers and
-(column-number-mode 1)			  ; column numbers in the mode line
-(tool-bar-mode -1)			  ; no tool bar with icons
-(global-linum-mode 1)			  ; add line numbers on the left
-(setq initial-scratch-message nil)        ; empty scratch buffer
-(setq truncate-partial-width-windows nil) ; wrap lines for vertically split windows
+(setq inhibit-splash-screen t
+      initial-scratch-message nil
+      truncate-partial-width-windows nil)
+(line-number-mode 1) ; have line numbers and
+(column-number-mode 1) ; column numbers in the mode line
+(tool-bar-mode -1) ; no tool bar with icons
+(global-linum-mode 1) ; add line numbers on the left
 (highlight-symbol-mode 1)
 (load "color-theme-miami-vice")
 (color-theme-miami-vice)
@@ -131,19 +130,20 @@
 ;; 
 
 (add-to-list 'default-frame-alist '(alpha . 100))  ; compiz fix
-(setq x-select-enable-clipboard t)                 ; fix clipboard behavior
-(setq make-backup-files nil)
-(setq auto-save-default nil)
-(setq-default tab-width 2)
-(setq-default indent-tabs-mode nil)
+(setq x-select-enable-clipboard t
+      make-backup-files nil
+      auto-save-default nil
+      diff-switches "-u -w"
+      whitespace-style '(trailing lines space-before-tab
+                                  face indentation space-after-tab))
+(setq-default tab-width 2
+              indent-tabs-mode nil)
 (fset 'yes-or-no-p 'y-or-n-p)
 (delete-selection-mode t)                          ; typed text replaces active selection
 (blink-cursor-mode t)
 (show-paren-mode t)
 (auto-compression-mode t)
 (recentf-mode 1)
-(setq diff-switches "-u -w"
-      magit-diff-options "-w")
 
 ;; 
 ;; creature comforts
@@ -151,10 +151,11 @@
 
 (require 'ido)
 (ido-mode t)
-(setq ido-save-directory-list-file "~/.emacs.d/.ido.last")
-(setq ido-enable-flex-matching t)
-(setq ido-use-filename-at-point 'guess)
-(setq ido-show-dot-for-dired t)
+(setq ido-save-directory-list-file "~/.emacs.d/.ido.last"
+      ido-enable-flex-matching t
+      ido-use-filename-at-point 'guess
+      ido-show-dot-for-dired t)
+
 
 (defun recentf-ido-find-file ()
   "Find a recent file using ido.
@@ -171,15 +172,15 @@
 ;;
 
 (define-key global-map "\C-ca" 'org-agenda)
-(setq org-hide-leading-stars t)
-(setq org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
+(setq org-hide-leading-stars t
+      org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
 
 ;;; configure mobile org
 ;;; see http://mobileorg.ncogni.to/doc/getting-started/using-dropbox/
-(setq org-directory "~/Dropbox/Documents/Alan/org")
-(setq org-agenda-files '("~/Dropbox/Documents/Alan/org/agenda.org"))
-(setq org-mobile-directory "~/Dropbox/MobileOrg")
-(setq org-mobile-inbox-for-pull "~/Dropbox/inbox.org")
+(setq org-directory "~/Dropbox/Documents/Alan/org"
+      org-agenda-files '("~/Dropbox/Documents/Alan/org/agenda.org")
+      org-mobile-directory "~/Dropbox/MobileOrg"
+      org-mobile-inbox-for-pull "~/Dropbox/inbox.org")
 
 ;; 
 ;; window-system specific
@@ -200,10 +201,10 @@
 
 (when (eq system-type 'darwin)
   (progn
-    (setq grep-find-use-xargs 'exec)
-    (setq ispell-program-name "aspell")
+    (setq grep-find-use-xargs 'exec
+          ispell-program-name "aspell"
+          magit-git-executable "/usr/local/bin/git")
     (add-to-list 'exec-path "/usr/local/bin")
-    (setq magit-git-executable "/usr/local/bin/git")
     (when window-system
       (menu-bar-mode 1)
       (set-frame-font "Menlo-16"))))
