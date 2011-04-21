@@ -144,6 +144,8 @@
 (show-paren-mode t)
 (auto-compression-mode t)
 (recentf-mode 1)
+(setq diff-switches "-u -w")
+(menu-bar-mode 0)
 
 ;; 
 ;; creature comforts
@@ -192,8 +194,7 @@
     (tooltip-mode -1)
     (scroll-bar-mode -1)			  ; no scroll bars
     (modify-frame-parameters (selected-frame)
-                             (list (cons 'cursor-type 'hollow)))
-    (menu-bar-mode 0)))
+                             (list (cons 'cursor-type 'hollow)))))
 
 ;; 
 ;; os x specific
@@ -206,8 +207,9 @@
           magit-git-executable "/usr/local/bin/git")
     (add-to-list 'exec-path "/usr/local/bin")
     (when window-system
-      (menu-bar-mode 1)
-      (set-frame-font "Menlo-16"))))
+        (progn
+          (set-frame-font "Menlo-16")
+          (menu-bar-mode 1)))))
 
 ;; 
 ;; change font size
