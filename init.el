@@ -83,8 +83,7 @@
         (:name clojure-mode :type elpa)
         (:name durendal :after (lambda () (durendal-enable)))
 
-        (:name swank-clojure
-               :after (lambda () (add-hook 'slime-repl-mode-hook 'clojure-mode-font-lock-setup)))
+        swank-clojure
 
         (:name org
                :type elpa
