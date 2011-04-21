@@ -143,8 +143,7 @@
 (show-paren-mode t)
 (auto-compression-mode t)
 (recentf-mode 1)
-(setq diff-switches "-u -w"
-      magit-diff-options "-w")
+(setq diff-switches "-u -w")
 
 ;; 
 ;; creature comforts
