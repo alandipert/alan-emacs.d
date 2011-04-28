@@ -53,7 +53,7 @@
                         (add-to-list 'package-archives
                                      '("marmalade" . "http://marmalade-repo.org/packages/"))
                         (add-to-list 'package-archives
-                                     '("tailrecursion" . "http://repo.tailrecursion.com/emacs/"))))
+                                     '("tailrecursion" . "http://tailrecursion.com/~alan/repo/emacs/"))))
 
         (:name fuzzy-format
                :after (lambda ()
