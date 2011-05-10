@@ -47,6 +47,7 @@
         yasnippet
         markdown-mode
         swank-clojure
+        php-mode
 
         (:name package24
                :after (lambda ()
@@ -157,6 +158,10 @@
 
 (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
 
+;;; use ibuffer
+;;; http://martinowen.net/blog/2010/02/tips-for-emacs-ibuffer.html
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;;
 ;; org settings
 ;;
@@ -223,3 +228,4 @@
 
 (global-set-key (kbd "C-+") 'increase-font-size)
 (global-set-key (kbd "C--") 'decrease-font-size)
+(put 'narrow-to-region 'disabled nil)
