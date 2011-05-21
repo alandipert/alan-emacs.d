@@ -48,6 +48,7 @@
         markdown-mode
         swank-clojure
         php-mode
+        coffee-mode
 
         (:name package24
                :after (lambda ()
