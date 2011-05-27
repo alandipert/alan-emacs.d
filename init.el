@@ -49,7 +49,9 @@
         swank-clojure
         php-mode
         coffee-mode
+        haml-mode
         sass-mode
+        textile-mode
 
         (:name package24
                :after (lambda ()
