@@ -1,4 +1,17 @@
 ;;
+;; helper functions and macros
+;; 
+
+(defmacro if-let (var-value then else)
+  `(let (,var-value)
+     (if ,(car var-value)
+         ,then
+       ,else)))
+
+(defmacro when-let (var-value then)
+  `(if-let ,var-value ,then nil))
+
+;;
 ;; path
 ;;
 
@@ -36,31 +49,33 @@
 ;;
 
 (setq el-get-sources
-      '(el-get
-        elein
-        color-theme
+      '(ac-slime
         auto-complete
-        ac-slime
-        hl-sexp
-        highlight-symbol
-        highlight-parentheses
-        yasnippet
-        markdown-mode
-        swank-clojure
-        php-mode
         coffee-mode
+        color-theme
+        el-get
+        elein
         haml-mode
+        highlight-parentheses
+        hl-sexp
+        markdown-mode
+        nav
+        php-mode
         sass-mode
+        swank-clojure
         textile-mode
         yaml-mode
-        nav
+        yasnippet
+        org-mode
 
         (:name package24
                :after (lambda ()
                         (add-to-list 'package-archives
                                      '("marmalade" . "http://marmalade-repo.org/packages/"))
                         (add-to-list 'package-archives
-                                     '("tailrecursion" . "http://tailrecursion.com/~alan/repo/emacs/"))))
+                                     '("tailrecursion" . "http://tailrecursion.com/~alan/repo/emacs/"))
+                        (add-to-list 'package-archives
+                                     '("elpa" . "http://tromey.com/elpa/"))))
 
         (:name fuzzy-format
                :after (lambda ()
@@ -75,6 +90,10 @@
         (:name magit
                :after (lambda ()
                         (global-set-key (kbd "C-x C-z") 'magit-status)))
+
+        (:name highlight-symbol
+               :after (lambda ()
+                        (highlight-symbol-mode 1)))
 
         (:name paredit
                :after (lambda () 
@@ -123,6 +142,17 @@
                                    window-system)
                           (global-set-key (kbd "s-t") 'find-file-in-project))))
 
+        (:name ruby-mode :type elpa)
+
+        (:name ruby-block
+               :type emacswiki
+               :features ruby-block)
+
+        (:name ruby-end
+               :type http
+               :url "https://github.com/rejeep/ruby-end/raw/master/ruby-end.el"
+               :features ruby-end)
+
         (:name autopair
                :after (lambda ()
                         (autopair-global-mode)))
@@ -149,7 +179,6 @@
 (column-number-mode 1) ; column numbers in the mode line
 (tool-bar-mode -1) ; no tool bar with icons
 (global-linum-mode 1) ; add line numbers on the left
-(highlight-symbol-mode 1)
 (load "color-theme-miami-vice")
 (color-theme-miami-vice)
 
@@ -203,9 +232,9 @@
 (setq ibuffer-expert t)
 (setq ibuffer-show-empty-filter-groups nil)
 (add-hook 'ibuffer-mode-hook 
-	  '(lambda ()
-	     (ibuffer-auto-mode 1)
-	     (ibuffer-switch-to-saved-filter-groups "home")))
+          '(lambda ()
+             (ibuffer-auto-mode 1)
+             (ibuffer-switch-to-saved-filter-groups "home")))
 
 ;;
 ;; org settings
@@ -238,9 +267,9 @@
           magit-git-executable "/usr/local/bin/git")
     (add-to-list 'exec-path "/usr/local/bin")
     (when window-system
-        (progn
-          (set-frame-font "Menlo-16")
-          (menu-bar-mode 1)))))
+      (progn
+        (set-frame-font "Menlo-14")
+        (menu-bar-mode 1)))))
 
 ;;
 ;; lisp jockeying
@@ -259,7 +288,7 @@
          (clj-jar (concat clj-dir "clojure.jar")))
     (if (file-exists-p clj-jar)
         (inferior-lisp (concat "java -cp " clj-jar " clojure.main"))
-      (when (yes-or-no-p (concat "clojure.jar not found.  Build clojure?"))
+      (when (yes-or-no-p (concat "clojure.jar not found.  Build?"))
         (if (shell-command (concat "cd " clj-dir " && ant"))
             (cljrepl)
           (message "Building Clojure failed."))))))
@@ -271,14 +300,16 @@
 (defun increase-font-size ()
   (interactive)
   (set-face-attribute 'default nil :height
-   (ceiling (* 1.10
-               (face-attribute 'default :height)))))
+                      (ceiling (* 1.10
+                                  (face-attribute 'default :height)))))
 
 (defun decrease-font-size ()
   (interactive)
   (set-face-attribute 'default nil :height
-   (floor (* 0.9
-             (face-attribute 'default :height)))))
+                      (floor (* 0.9
+                                (face-attribute 'default :height)))))
+
+
 ;;
 ;; key bindings
 ;;
@@ -286,4 +317,7 @@
 (global-set-key (kbd "C-+") 'increase-font-size)
 (global-set-key (kbd "C--") 'decrease-font-size)
 (global-set-key (kbd "M-j") 'join-line)
+(global-set-key (kbd "RET") 'newline-and-indent)
 (put 'narrow-to-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
