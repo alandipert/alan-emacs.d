@@ -194,13 +194,6 @@
 (setq org-hide-leading-stars t
       org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
 
-;;; configure mobile org
-;;; see http://mobileorg.ncogni.to/doc/getting-started/using-dropbox/
-(setq org-directory "~/Dropbox/Documents/Alan/org"
-      org-agenda-files '("~/Dropbox/Documents/Alan/org/agenda.org")
-      org-mobile-directory "~/Dropbox/MobileOrg"
-      org-mobile-inbox-for-pull "~/Dropbox/inbox.org")
-
 ;; 
 ;; window-system specific
 ;; 
