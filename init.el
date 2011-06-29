@@ -91,7 +91,7 @@
 
         (:name clojure-mode :type elpa
                :after (lambda ()
-                        (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))))
+                        (add-to-list 'auto-mode-alist '("\\.clj.*$" . clojure-mode))))
 
         (:name durendal :after (lambda () (durendal-enable)))
 
@@ -254,7 +254,14 @@
 (defun cljrepl ()
   "Launch a Clojure REPL."
   (interactive)
-  (let ((clj-jar /Users/alan/Projects/clojure/clojure/clojure.jar)) (inferior-lisp "java -cp  clojure.main")))
+  (let* ((clj-dir "/Users/alan/Projects/clojure/clojure/")
+         (clj-jar (concat clj-dir "clojure.jar")))
+    (if (file-exists-p clj-jar)
+        (inferior-lisp (concat "java -cp " clj-jar " clojure.main"))
+      (if (yes-or-no-p (concat "clojure.jar not found.  Build clojure?"))
+          (if (shell-command (concat "cd " clj-dir " && ant"))
+              (cljrepl)
+            (message "Building Clojure failed."))))))
 
 ;; 
 ;; change font size
