@@ -73,7 +73,8 @@
                         (global-smart-tab-mode 1)))
 
         (:name magit
-               :after (lambda () (global-set-key (kbd "C-x C-z") 'magit-status)))
+               :after (lambda ()
+                        (global-set-key (kbd "C-x C-z") 'magit-status)))
 
         (:name paredit
                :after (lambda () 
@@ -93,7 +94,8 @@
                :after (lambda ()
                         (add-to-list 'auto-mode-alist '("\\.clj.*$" . clojure-mode))))
 
-        (:name durendal :after (lambda () (durendal-enable)))
+        (:name durendal :after (lambda ()
+                                 (durendal-enable)))
 
         (:name slime
                :after (lambda ()
