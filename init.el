@@ -52,6 +52,8 @@
         haml-mode
         sass-mode
         textile-mode
+        yaml-mode
+        nav
 
         (:name package24
                :after (lambda ()
@@ -82,13 +84,25 @@
                         ;; a binding that works in the terminal
                         (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
-        (:name clojure-mode :type elpa)
+        (:name clojure-mode :type elpa
+               :after (lambda ()
+                        (add-to-list 'auto-mode-alist '("\\.cljs$" . clojure-mode))))
+
         (:name durendal :after (lambda () (durendal-enable)))
 
         (:name slime
                :after (lambda ()
-                        (setq slime-protocol-version 'ignore)))
+                        (setq slime-protocol-version 'ignore)
+                        (setq font-lock-verbose nil)))
         (:name slime-repl :type elpa)
+
+        ;; hide details in dired buffers.
+        ;; '(' to show details, ')' to hide them.
+        ;; http://www.emacswiki.org/emacs/DiredDetails
+        (:name dired-details
+               :after (lambda ()
+                        (require 'dired-details)
+                        (dired-details-install)))
 
         ;; stuff from tailrecursion repo
         (:name color-theme-miami-vice :type elpa)
@@ -213,6 +227,11 @@
         (progn
           (set-frame-font "Menlo-16")
           (menu-bar-mode 1)))))
+
+(defun quicklisp ()
+  (interactive)
+  (load (expand-file-name "~/quicklisp/slime-helper.el"))
+  (setq inferior-lisp-program "/usr/local/bin/sbcl"))
 
 ;; 
 ;; change font size
