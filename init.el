@@ -114,7 +114,12 @@
                :url "git://github.com/dburger/find-file-in-project.git"
                :after (lambda ()
                         (setq ffip-patterns '("*"))
-                        (global-set-key (kbd "C-x M-f") 'find-file-in-project)))
+
+                        ;; C-x M-f everywhere, Cmd-T on Mac GUI
+                        (global-set-key (kbd "C-x M-f") 'find-file-in-project)
+                        (when (and (eq system-type 'darwin)
+                                   window-system)
+                          (global-set-key (kbd "s-t") 'find-file-in-project))))
 
         (:name autopair
                ;; Textmate style autopairing; better than insert-pair
@@ -236,10 +241,7 @@
     (when window-system
         (progn
           (set-frame-font "Menlo-16")
-          (menu-bar-mode 1))
-        (when (locate-library "find-file-in-project")
-          ;; TextMate Cmd-T emulation.  C-x M-f also bound.
-          (global-set-key (kbd "s-t") 'find-file-in-project)))))
+          (menu-bar-mode 1)))))
 
 ;;
 ;; lisp jockeying
