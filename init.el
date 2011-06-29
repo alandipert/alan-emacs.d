@@ -77,10 +77,15 @@
 
         (:name paredit
                :after (lambda () 
-                        (add-hook 'clojure-mode-hook          (lambda () (paredit-mode +1)))
-                        (add-hook 'emacs-lisp-mode-hook       (lambda () (paredit-mode +1)))
-                        (add-hook 'lisp-mode-hook             (lambda () (paredit-mode +1)))
-                        (add-hook 'lisp-interaction-mode-hook (lambda () (paredit-mode +1)))
+                        (let ((paredit-modes '(clojure
+                                               emacs-lisp
+                                               lisp
+                                               lisp-interaction
+                                               ielm)))
+                          (dolist (mode paredit-modes)
+                            (add-hook (intern (concat (symbol-name mode) "-mode-hook"))
+                                      (lambda () (paredit-mode +1)))))
+
                         ;; a binding that works in the terminal
                         (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
@@ -96,15 +101,27 @@
                         (setq font-lock-verbose nil)))
         (:name slime-repl :type elpa)
 
-        ;; hide details in dired buffers.
-        ;; '(' to show details, ')' to hide them.
-        ;; http://www.emacswiki.org/emacs/DiredDetails
         (:name dired-details
+               ;; Hide details in dired buffers.
+               ;; '(' to show details, ')' to hide them.
+               ;; See http://www.emacswiki.org/emacs/DiredDetails
                :after (lambda ()
                         (require 'dired-details)
                         (dired-details-install)))
 
-        ;; stuff from tailrecursion repo
+        (:name find-file-in-project
+               :type git
+               :url "git://github.com/dburger/find-file-in-project.git"
+               :after (lambda ()
+                        (setq ffip-patterns '("*"))
+                        (global-set-key (kbd "C-x M-f") 'find-file-in-project)))
+
+        (:name autopair
+               ;; Textmate style autopairing; better than insert-pair
+               :after (lambda ()
+                        (autopair-global-mode)))
+
+        ;; Themes and modes from the tailrecursion repo.
         (:name color-theme-miami-vice :type elpa)
         (:name mvnrepl :type elpa)))
 
@@ -219,12 +236,25 @@
     (when window-system
         (progn
           (set-frame-font "Menlo-16")
-          (menu-bar-mode 1)))))
+          (menu-bar-mode 1))
+        (when (locate-library "find-file-in-project")
+          ;; TextMate Cmd-T emulation.  C-x M-f also bound.
+          (global-set-key (kbd "s-t") 'find-file-in-project)))))
+
+;;
+;; lisp jockeying
+;; 
 
 (defun quicklisp ()
+  "Launch SBCL with quicklisp."
   (interactive)
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
   (setq inferior-lisp-program "/usr/local/bin/sbcl"))
+
+(defun cljrepl ()
+  "Launch a Clojure REPL."
+  (interactive)
+  (let ((clj-jar /Users/alan/Projects/clojure/clojure/clojure.jar)) (inferior-lisp "java -cp  clojure.main")))
 
 ;; 
 ;; change font size
