@@ -122,17 +122,14 @@
                           (global-set-key (kbd "s-t") 'find-file-in-project))))
 
         (:name autopair
-               ;; Textmate style autopairing; better than insert-pair
                :after (lambda ()
                         (autopair-global-mode)))
 
-        ;; Themes and modes from the tailrecursion repo.
         (:name color-theme-miami-vice :type elpa)
         (:name mvnrepl :type elpa)))
 
 (el-get)
 
-;;; set ~/.emacs.d/custom.el as custom-file, creating if necessary
 (let ((user-custom-file "~/.emacs.d/custom.el"))
   (if (not (file-exists-p user-custom-file))
       (shell-command (concat "touch " user-custom-file)))
@@ -260,10 +257,10 @@
          (clj-jar (concat clj-dir "clojure.jar")))
     (if (file-exists-p clj-jar)
         (inferior-lisp (concat "java -cp " clj-jar " clojure.main"))
-      (if (yes-or-no-p (concat "clojure.jar not found.  Build clojure?"))
-          (if (shell-command (concat "cd " clj-dir " && ant"))
-              (cljrepl)
-            (message "Building Clojure failed."))))))
+      (when (yes-or-no-p (concat "clojure.jar not found.  Build clojure?"))
+        (if (shell-command (concat "cd " clj-dir " && ant"))
+            (cljrepl)
+          (message "Building Clojure failed."))))))
 
 ;; 
 ;; change font size
@@ -271,22 +268,20 @@
 
 (defun increase-font-size ()
   (interactive)
-  (set-face-attribute 'default
-                      nil
-                      :height
-                      (ceiling (* 1.10
-                                  (face-attribute 'default :height)))))
+  (set-face-attribute 'default nil :height
+   (ceiling (* 1.10
+               (face-attribute 'default :height)))))
+
 (defun decrease-font-size ()
   (interactive)
-  (set-face-attribute 'default
-                      nil
-                      :height
-                      (floor (* 0.9
-                                (face-attribute 'default :height)))))
+  (set-face-attribute 'default nil :height
+   (floor (* 0.9
+             (face-attribute 'default :height)))))
 ;;
 ;; key bindings
 ;;
 
 (global-set-key (kbd "C-+") 'increase-font-size)
 (global-set-key (kbd "C--") 'decrease-font-size)
+(global-set-key (kbd "M-j") 'join-line)
 (put 'narrow-to-region 'disabled nil)
