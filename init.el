@@ -260,7 +260,8 @@
     (when window-system
       (progn
         (set-frame-font "Menlo-14")
-        (menu-bar-mode 1)))))
+        (menu-bar-mode 1)
+        (global-set-key (kbd "s-m") 'ns-toggle-fullscreen)))))
 
 ;;
 ;; lisp jockeying
