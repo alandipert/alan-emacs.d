@@ -1,17 +1,4 @@
 ;;
-;; helper functions and macros
-;; 
-
-(defmacro if-let (var-value then else)
-  `(let (,var-value)
-     (if ,(car var-value)
-         ,then
-       ,else)))
-
-(defmacro when-let (var-value then)
-  `(if-let ,var-value ,then nil))
-
-;;
 ;; path
 ;;
 
@@ -96,7 +83,7 @@
                         (highlight-symbol-mode 1)))
 
         (:name paredit
-               :after (lambda () 
+               :after (lambda ()
                         (let ((paredit-modes '(clojure
                                                emacs-lisp
                                                lisp
@@ -157,10 +144,15 @@
                :after (lambda ()
                         (autopair-global-mode)))
 
-        (:name color-theme-miami-vice :type elpa)
+        (:name color-theme-miami-vice
+	       :type elpa
+	       :after (lambda ()
+                  (load "color-theme-miami-vice")
+                  (color-theme-miami-vice)))
+
         (:name mvnrepl :type elpa)))
 
-(el-get)
+(el-get 'sync)
 
 (let ((user-custom-file "~/.emacs.d/custom.el"))
   (if (not (file-exists-p user-custom-file))
@@ -168,9 +160,9 @@
   (setq custom-file user-custom-file)
   (load custom-file))
 
-;; 
+;;
 ;; visual settings
-;; 
+;;
 
 (setq inhibit-splash-screen t
       initial-scratch-message nil
@@ -179,12 +171,10 @@
 (column-number-mode 1) ; column numbers in the mode line
 (tool-bar-mode -1) ; no tool bar with icons
 (global-linum-mode 1) ; add line numbers on the left
-(load "color-theme-miami-vice")
-(color-theme-miami-vice)
 
-;; 
+;;
 ;; quirk fixes, behaviors
-;; 
+;;
 
 (add-to-list 'default-frame-alist '(alpha . 100))  ; compiz fix
 (setq x-select-enable-clipboard t
@@ -204,9 +194,9 @@
 (setq diff-switches "-u -w")
 (menu-bar-mode 0)
 
-;; 
+;;
 ;; creature comforts
-;; 
+;;
 
 (require 'ido)
 (ido-mode t)
@@ -231,7 +221,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (setq ibuffer-expert t)
 (setq ibuffer-show-empty-filter-groups nil)
-(add-hook 'ibuffer-mode-hook 
+(add-hook 'ibuffer-mode-hook
           '(lambda ()
              (ibuffer-auto-mode 1)
              (ibuffer-switch-to-saved-filter-groups "home")))
@@ -244,9 +234,9 @@
 (setq org-hide-leading-stars t
       org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
 
-;; 
+;;
 ;; window-system specific
-;; 
+;;
 
 (when window-system
   (progn
@@ -256,9 +246,9 @@
     (modify-frame-parameters (selected-frame)
                              (list (cons 'cursor-type 'hollow)))))
 
-;; 
+;;
 ;; os x specific
-;; 
+;;
 
 (when (eq system-type 'darwin)
   (progn
@@ -273,7 +263,7 @@
 
 ;;
 ;; lisp jockeying
-;; 
+;;
 
 (defun quicklisp ()
   "Launch SBCL with quicklisp."
@@ -293,9 +283,9 @@
             (cljrepl)
           (message "Building Clojure failed."))))))
 
-;; 
+;;
 ;; change font size
-;; 
+;;
 
 (defun increase-font-size ()
   (interactive)
@@ -308,7 +298,6 @@
   (set-face-attribute 'default nil :height
                       (floor (* 0.9
                                 (face-attribute 'default :height)))))
-
 
 ;;
 ;; key bindings
