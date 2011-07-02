@@ -25,46 +25,18 @@
 (require 'el-get)
 
 ;;
-;; to make latest package.el work with Emacs 23
-;;
-
-(defconst package-subdirectory-regexp
-  "\\([^.].*?\\)-\\([0-9]+\\(?:[.][0-9]+\\|\\(?:pre\\|beta\\|alpha\\)[0-9]+\\)*\\)")
-
-;;
 ;; packages
 ;;
 
+(require 'package)
+(dolist (archive '(("marmalade" . "http://marmalade-repo.org/packages/")
+                   ("tailrecursion" . "http://tailrecursion.com/~alan/repo/emacs/")
+                   ("elpa" . "http://tromey.com/elpa/")))
+  (add-to-list 'package-archives archive))
+(package-initialize)
+
 (setq el-get-sources
-      '(ac-slime
-        auto-complete
-        coffee-mode
-        color-theme
-        el-get
-        elein
-        haml-mode
-        highlight-parentheses
-        hl-sexp
-        markdown-mode
-        nav
-        php-mode
-        sass-mode
-        swank-clojure
-        textile-mode
-        yaml-mode
-        yasnippet
-        org-mode
-
-        (:name package24
-               :after (lambda ()
-                        (add-to-list 'package-archives
-                                     '("marmalade" . "http://marmalade-repo.org/packages/"))
-                        (add-to-list 'package-archives
-                                     '("tailrecursion" . "http://tailrecursion.com/~alan/repo/emacs/"))
-                        (add-to-list 'package-archives
-                                     '("elpa" . "http://tromey.com/elpa/"))))
-
-        (:name fuzzy-format
+      '((:name fuzzy-format
                :after (lambda ()
                         (require 'fuzzy-format)
                         (setq fuzzy-format-default-indent-tabs-mode nil)
@@ -100,22 +72,26 @@
                :after (lambda ()
                         (add-to-list 'auto-mode-alist '("\\.clj.*$" . clojure-mode))))
 
-        (:name durendal :after (lambda ()
-                                 (durendal-enable)))
-
         (:name slime
+               :type elpa
                :after (lambda ()
                         (setq slime-protocol-version 'ignore)
                         (setq font-lock-verbose nil)))
-        (:name slime-repl :type elpa)
+
+	      (:name slime-repl :type elpa)
 
         (:name dired-details
-               ;; Hide details in dired buffers.
-               ;; '(' to show details, ')' to hide them.
-               ;; See http://www.emacswiki.org/emacs/DiredDetails
                :after (lambda ()
                         (require 'dired-details)
                         (dired-details-install)))
+
+        (:name haml-mode
+               :type git
+               :url "git://github.com/nex3/haml-mode.git")
+
+        (:name sass-mode
+               :type git
+               :url "git://github.com/nex3/sass-mode.git")
 
         (:name find-file-in-project
                :type git
@@ -141,18 +117,42 @@
                :features ruby-end)
 
         (:name autopair
+               :type http
+               :url "http://autopair.googlecode.com/svn/trunk/autopair.el"
                :after (lambda ()
+                        (require 'autopair)
                         (autopair-global-mode)))
 
         (:name color-theme-miami-vice
-	       :type elpa
-	       :after (lambda ()
-                  (load "color-theme-miami-vice")
-                  (color-theme-miami-vice)))
+               :type elpa
+               :after (lambda ()
+                        (load "color-theme-miami-vice")
+                        (color-theme-miami-vice)))
 
         (:name mvnrepl :type elpa)))
 
-(el-get 'sync)
+(setq my-packages
+      (append
+       '(ac-slime
+         auto-complete
+         coffee-mode
+         color-theme
+         color-theme-miami-vice
+	       durendal
+         el-get
+         elein
+         highlight-parentheses
+         hl-sexp
+         markdown-mode
+         sass-mode
+         swank-clojure
+         textile-mode
+         yaml-mode
+         yasnippet
+         org-mode)
+       (mapcar 'el-get-source-name el-get-sources)))
+
+(el-get 'sync my-packages)
 
 (let ((user-custom-file "~/.emacs.d/custom.el"))
   (if (not (file-exists-p user-custom-file))
@@ -169,7 +169,8 @@
       truncate-partial-width-windows nil)
 (line-number-mode 1) ; have line numbers and
 (column-number-mode 1) ; column numbers in the mode line
-(tool-bar-mode -1) ; no tool bar with icons
+(when (boundp 'tool-bar-mode)
+  (tool-bar-mode -1)) ; no tool bar with icons
 (global-linum-mode 1) ; add line numbers on the left
 
 ;;
