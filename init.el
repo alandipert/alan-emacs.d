@@ -167,6 +167,10 @@
 (setq inhibit-splash-screen t
       initial-scratch-message nil
       truncate-partial-width-windows nil)
+
+(when (locate-library "clojure-mode")   ;*scratch* is clojure-mode by default
+  (setq initial-major-mode 'clojure-mode))
+
 (line-number-mode 1) ; have line numbers and
 (column-number-mode 1) ; column numbers in the mode line
 (when (boundp 'tool-bar-mode)
