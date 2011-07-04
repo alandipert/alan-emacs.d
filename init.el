@@ -42,10 +42,6 @@
                         (setq fuzzy-format-default-indent-tabs-mode nil)
                         (global-fuzzy-format-mode t)))
 
-        (:name smart-tab
-               :after (lambda ()
-                        (global-smart-tab-mode 1)))
-
         (:name magit
                :after (lambda ()
                         (global-set-key (kbd "C-x C-z") 'magit-status)))
@@ -176,6 +172,7 @@
 (when (boundp 'tool-bar-mode)
   (tool-bar-mode -1)) ; no tool bar with icons
 (global-linum-mode 1) ; add line numbers on the left
+(setq linum-format "%d  ") ; throw a bit of padding on there
 
 ;;
 ;; quirk fixes, behaviors
@@ -210,7 +207,6 @@
       ido-use-filename-at-point 'guess
       ido-show-dot-for-dired t)
 
-
 (defun recentf-ido-find-file ()
   "Find a recent file using ido.
    From Phil Hagelberg's emacs-starter-kit."
@@ -220,6 +216,32 @@
       (find-file file))))
 
 (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
+
+;;; :set wrapscan emulation
+(defadvice isearch-search (after isearch-no-fail activate)
+  (unless isearch-success
+    (ad-disable-advice 'isearch-search 'after 'isearch-no-fail)
+    (ad-activate 'isearch-search)
+    (isearch-repeat (if isearch-forward 'forward))
+    (ad-enable-advice 'isearch-search 'after 'isearch-no-fail)
+    (ad-activate 'isearch-search)))
+
+;;; vim dt emulation
+(defun zap-until-char (arg char)
+  "Kill up to ARGth occurrence of CHAR.
+Case is ignored if `case-fold-search' is non-nil in the current buffer.
+Goes backward if ARG is negative; error if CHAR not found."
+  (interactive "p\ncZap until char: ")
+  (with-no-warnings
+    (if (char-table-p translation-table-for-input)
+        (setq char (or (aref translation-table-for-input char) char))))
+  (kill-region (point)
+               (progn
+                 (search-forward (char-to-string char) nil nil arg)
+                 (1- (point)))
+               (backward-char)))
+
+(global-set-key (kbd "M-z") 'zap-until-char)
 
 ;;; use ibuffer
 ;;; http://martinowen.net/blog/2010/02/tips-for-emacs-ibuffer.html
@@ -313,6 +335,12 @@
 (global-set-key (kbd "C--") 'decrease-font-size)
 (global-set-key (kbd "M-j") 'join-line)
 (global-set-key (kbd "RET") 'newline-and-indent)
+
+;; Behave like */# in Vim, jumping to symbols under point.
+(global-set-key (kbd "C-x *") 'highlight-symbol-next)
+(global-set-key (kbd "C-*") 'highlight-symbol-prev)
+
 (put 'narrow-to-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
+(put 'set-goal-column 'disabled nil)
