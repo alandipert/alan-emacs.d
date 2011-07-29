@@ -95,11 +95,25 @@
                :after (lambda ()
                         (setq ffip-patterns '("*"))
 
+                        ;; Do not cache by default.
+                        (setq ffip-use-project-cache nil)
+
+                        (defun ffip-toggle-use-project-cache ()
+                          (interactive)
+                          (setq ffip-use-project-cache (not ffip-use-project-cache))
+                          (message (concat "Project caching "
+                                           (if ffip-use-project-cache
+                                               "enabled."
+                                             "disabled."))))
+
                         ;; C-x M-f everywhere, Cmd-T on Mac GUI
+                        ;; C-u (key) to toggle project caching
                         (global-set-key (kbd "C-x M-f") 'find-file-in-project)
+                        (global-set-key (kbd "C-x M-F") 'ffip-toggle-use-project-cache)
                         (when (and (eq system-type 'darwin)
                                    window-system)
-                          (global-set-key (kbd "s-t") 'find-file-in-project))))
+                          (global-set-key (kbd "s-t") 'find-file-in-project)
+                          (global-set-key (kbd "s-T") 'ffip-toggle-use-project-cache))))
 
         (:name ruby-mode :type elpa)
 
@@ -173,6 +187,7 @@
   (tool-bar-mode -1)) ; no tool bar with icons
 (global-linum-mode 1) ; add line numbers on the left
 (setq linum-format "%d  ") ; throw a bit of padding on there
+(setq visible-bell t)
 
 ;;
 ;; quirk fixes, behaviors
