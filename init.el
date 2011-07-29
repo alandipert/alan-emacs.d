@@ -107,7 +107,7 @@
                                              "disabled."))))
 
                         ;; C-x M-f everywhere, Cmd-T on Mac GUI
-                        ;; C-u (key) to toggle project caching
+                        ;; Shift-(key) to toggle project caching
                         (global-set-key (kbd "C-x M-f") 'find-file-in-project)
                         (global-set-key (kbd "C-x M-F") 'ffip-toggle-use-project-cache)
                         (when (and (eq system-type 'darwin)
