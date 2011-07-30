@@ -62,7 +62,7 @@
                                       (lambda () (paredit-mode +1)))))
 
                         ;; a binding that works in the terminal
-                        (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
+                       (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
         (:name clojure-mode :type elpa
                :after (lambda ()
@@ -74,7 +74,7 @@
                         (setq slime-protocol-version 'ignore)
                         (setq font-lock-verbose nil)))
 
-	      (:name slime-repl :type elpa)
+        (:name slime-repl :type elpa)
 
         (:name dired-details
                :after (lambda ()
@@ -151,7 +151,7 @@
          coffee-mode
          color-theme
          color-theme-miami-vice
-	       durendal
+         durendal
          el-get
          elein
          highlight-parentheses
@@ -287,7 +287,7 @@ Goes backward if ARG is negative; error if CHAR not found."
   (progn
     (set-fringe-style -1)
     (tooltip-mode -1)
-    (scroll-bar-mode -1)			  ; no scroll bars
+    (scroll-bar-mode -1) ; no scroll bars
     (modify-frame-parameters (selected-frame)
                              (list (cons 'cursor-type 'hollow)))))
 
