@@ -25,16 +25,16 @@
 * Install required packages:
 
       sudo apt-get install build-essentials texinfo libncurses5-dev autoconf automake shtool libgtk2.0-dev libtiff4-dev libgif-dev libjpeg62-dev libpng12-dev libxpm-dev libtool
-    
+
 * Clone emacs from its git mirror:
 
       git clone git://git.savannah.gnu.org/emacs.git
       cd emacs
-    
+
 * Build and install:
 
       make && sudo make install
-    
+
 ### Mac
 
 * Install the [homebrew](https://github.com/mxcl/homebrew) package manager
