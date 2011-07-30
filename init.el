@@ -93,12 +93,15 @@
                :type git
                :url "git://github.com/dburger/find-file-in-project.git"
                :after (lambda ()
+
+                        ;; We don't care about no stinkin' patterns!
                         (setq ffip-patterns '("*"))
 
                         ;; Do not cache by default.
                         (setq ffip-use-project-cache nil)
 
                         (defun ffip-toggle-use-project-cache ()
+                          "Toggles project file caching for find-file-in-project.el."
                           (interactive)
                           (setq ffip-use-project-cache (not ffip-use-project-cache))
                           (message (concat "Project caching "
