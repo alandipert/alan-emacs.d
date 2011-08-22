@@ -35,8 +35,31 @@
   (add-to-list 'package-archives archive))
 (package-initialize)
 
+;; local sources
 (setq el-get-sources
-      '((:name fuzzy-format
+      '(ac-slime
+        auto-complete
+        coffee-mode
+        color-theme
+        dired-details
+        durendal
+        elein
+        el-get
+        haml-mode
+        highlight-parentheses
+        hl-sexp
+        markdown-mode
+        org-mode
+        ruby-block
+        ruby-end
+        ruby-mode
+        sass-mode
+        swank-clojure
+        textile-mode
+        yaml-mode
+        yasnippet
+
+        (:name fuzzy-format
                :after (lambda ()
                         (require 'fuzzy-format)
                         (setq fuzzy-format-default-indent-tabs-mode nil)
@@ -74,21 +97,6 @@
                         (setq slime-protocol-version 'ignore)
                         (setq font-lock-verbose nil)))
 
-        (:name slime-repl :type elpa)
-
-        (:name dired-details
-               :after (lambda ()
-                        (require 'dired-details)
-                        (dired-details-install)))
-
-        (:name haml-mode
-               :type git
-               :url "git://github.com/nex3/haml-mode.git")
-
-        (:name sass-mode
-               :type git
-               :url "git://github.com/nex3/sass-mode.git")
-
         (:name find-file-in-project
                :type git
                :url "git://github.com/dburger/find-file-in-project.git"
@@ -118,20 +126,7 @@
                           (global-set-key (kbd "s-t") 'find-file-in-project)
                           (global-set-key (kbd "s-T") 'ffip-toggle-use-project-cache))))
 
-        (:name ruby-mode :type elpa)
-
-        (:name ruby-block
-               :type emacswiki
-               :features ruby-block)
-
-        (:name ruby-end
-               :type http
-               :url "https://github.com/rejeep/ruby-end/raw/master/ruby-end.el"
-               :features ruby-end)
-
         (:name autopair
-               :type http
-               :url "http://autopair.googlecode.com/svn/trunk/autopair.el"
                :after (lambda ()
                         (require 'autopair)
                         (autopair-global-mode)))
@@ -140,32 +135,9 @@
                :type elpa
                :after (lambda ()
                         (load "color-theme-miami-vice")
-                        (color-theme-miami-vice)))
+                        (color-theme-miami-vice)))))
 
-        (:name mvnrepl :type elpa)))
-
-(setq my-packages
-      (append
-       '(ac-slime
-         auto-complete
-         coffee-mode
-         color-theme
-         color-theme-miami-vice
-         durendal
-         el-get
-         elein
-         highlight-parentheses
-         hl-sexp
-         markdown-mode
-         sass-mode
-         swank-clojure
-         textile-mode
-         yaml-mode
-         yasnippet
-         org-mode)
-       (mapcar 'el-get-source-name el-get-sources)))
-
-(el-get 'sync my-packages)
+(el-get 'sync)
 
 (let ((user-custom-file "~/.emacs.d/custom.el"))
   (if (not (file-exists-p user-custom-file))
