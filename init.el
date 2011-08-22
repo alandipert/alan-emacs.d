@@ -289,11 +289,15 @@ Goes backward if ARG is negative; error if CHAR not found."
   (load (expand-file-name "~/quicklisp/slime-helper.el"))
   (setq inferior-lisp-program "/usr/local/bin/sbcl"))
 
+(defcustom clj-dir "/home/alan/projects/opensource/clojure"
+  "Path to Clojure source directory."
+  :type 'string
+  :group 'cljrepl)
+
 (defun cljrepl ()
   "Launch a Clojure REPL."
   (interactive)
-  (let* ((clj-dir "/Users/alan/Projects/clojure/clojure/")
-         (clj-jar (concat clj-dir "clojure.jar")))
+  (let* ((clj-jar (concat clj-dir "/clojure.jar")))
     (if (file-exists-p clj-jar)
         (inferior-lisp (concat "java -cp " clj-jar " clojure.main"))
       (when (yes-or-no-p (concat "clojure.jar not found.  Build?"))

@@ -13,7 +13,7 @@
 
 ### Install
 
-1. Clone this repository move it to `~/.emacs.d`
+1. Clone this repository into `~/.emacs.d`
 2. Run Emacs.  When you see the message "Congrats, el-get is installed and ready to serve!", restart Emacs.
 3. Emacs will do stuff and then you'll see warning messages.  Keep restarting Emacs until the messages go away.
 4. Done!
@@ -24,7 +24,7 @@
 
 * Install required packages:
 
-      sudo apt-get install build-essentials texinfo libncurses5-dev autoconf automake shtool libgtk2.0-dev libtiff4-dev libgif-dev libjpeg62-dev libpng12-dev libxpm-dev libtool
+      sudo apt-get install build-essential texinfo libncurses5-dev autoconf automake shtool libgtk2.0-dev libtiff4-dev libgif-dev libjpeg62-dev libpng12-dev libxpm-dev libtool
 
 * Clone emacs from its git mirror:
 
