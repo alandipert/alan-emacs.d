@@ -85,7 +85,7 @@
                                       (lambda () (paredit-mode +1)))))
 
                         ;; a binding that works in the terminal
-                       (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
+                        (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
 
         (:name clojure-mode :type elpa
                :after (lambda ()
@@ -179,7 +179,7 @@
               indent-tabs-mode nil)
 (fset 'yes-or-no-p 'y-or-n-p)
 (delete-selection-mode t)                          ; typed text replaces active selection
-(blink-cursor-mode t)
+;; (blink-cursor-mode t)
 (show-paren-mode t)
 (auto-compression-mode t)
 (recentf-mode 1)
