@@ -280,10 +280,35 @@ Goes backward if ARG is negative; error if CHAR not found."
       org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
 
 ;;
+;; linux fullscreen
+;;
+
+(defvar my-fullscreen-p t "Check if fullscreen is on or off")
+
+(defun my-non-fullscreen ()
+  (interactive)
+	(progn
+    (set-frame-parameter nil 'width 82)
+    (set-frame-parameter nil 'fullscreen 'fullheight)))
+
+(defun my-fullscreen ()
+  (interactive)
+	(set-frame-parameter nil 'fullscreen 'fullboth))
+
+(defun toggle-fullscreen ()
+  (interactive)
+  (setq my-fullscreen-p (not my-fullscreen-p))
+  (if my-fullscreen-p
+      (my-non-fullscreen)
+    (my-fullscreen)))
+
+;;
 ;; window-system specific
 ;;
 
 (when window-system
+  (if (not (eq system-type 'darwin))
+      (global-set-key (kbd "M-m") 'toggle-fullscreen))
   (progn
     (set-fringe-style -1)
     (tooltip-mode -1)
