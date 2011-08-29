@@ -322,7 +322,7 @@ Goes backward if ARG is negative; error if CHAR not found."
 (defun cljrepl ()
   "Launch a Clojure REPL."
   (interactive)
-  (let* ((clj-jar (concat clj-dir "/clojure.jar")))
+  (let ((clj-jar (concat clj-dir "/clojure.jar")))
     (if (file-exists-p clj-jar)
         (inferior-lisp (concat "java -cp " clj-jar " clojure.main"))
       (when (yes-or-no-p (concat "clojure.jar not found.  Build?"))
