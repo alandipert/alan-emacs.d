@@ -304,7 +304,6 @@ Goes backward if ARG is negative; error if CHAR not found."
     (setq grep-find-use-xargs 'exec
           ispell-program-name "aspell"
           magit-git-executable "/usr/local/bin/git")
-    (add-to-list 'exec-path "/usr/local/bin")
     (when window-system
       (progn
         (set-frame-font "Menlo-14")
