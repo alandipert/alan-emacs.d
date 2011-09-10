@@ -2,10 +2,15 @@
 ;; path
 ;;
 
-(push "/usr/local/bin" exec-path)
-(let ((user-bin "~/.local/bin"))
-  (if (file-exists-p user-bin)
-      (push user-bin exec-path)))
+(defun add-to-path (dir)
+  "Adds a dir to PATH if dir exists."
+  (when (file-exists-p dir)
+    (progn (push dir exec-path)
+           (setenv "PATH" (concat (getenv "PATH") (concat ":" dir))))))
+
+(dolist (dir '("/usr/local/bin"
+               "~/.local/bin"))
+  (add-to-path dir))
 
 ;;
 ;; init el-get, installing if necessary
@@ -90,6 +95,8 @@
         (:name clojure-mode :type elpa
                :after (lambda ()
                         (add-to-list 'auto-mode-alist '("\\.clj.*$" . clojure-mode))))
+
+        (:name slime-repl :type elpa)
 
         (:name slime
                :type elpa
