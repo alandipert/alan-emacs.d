@@ -2,6 +2,9 @@
 ;; path
 ;;
 
+;; (push "/usr/local/bin" exec-path)
+;; (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+
 (push "/usr/local/bin" exec-path)
 (let ((user-bin "~/.local/bin"))
   (if (file-exists-p user-bin)
@@ -97,6 +100,10 @@
                         (setq slime-protocol-version 'ignore)
                         (setq font-lock-verbose nil)))
 
+        (:name org-velocity
+               :type http
+               :url "http://repo.or.cz/w/org-mode.git?a=blob_plain;f=contrib/lisp/org-velocity.el")
+        
         (:name find-file-in-project
                :type git
                :url "git://github.com/dburger/find-file-in-project.git"
@@ -126,16 +133,28 @@
                           (global-set-key (kbd "s-t") 'find-file-in-project)
                           (global-set-key (kbd "s-T") 'ffip-toggle-use-project-cache))))
 
+        (:name nyan-mode
+               :type git
+               :url "git://github.com/TeMPOraL/nyan-mode.git"
+               :after (lambda ()
+                        (when window-system
+                          (nyan-mode 't))))
+
+        (:name mvnrepl
+               :type elpa
+               :after (lambda ()
+                        (require 'mvnrepl)))
+
         (:name autopair
                :after (lambda ()
                         (require 'autopair)
-                        (autopair-global-mode)))
+                        (autopair-global-mode))))
 
-        (:name color-theme-miami-vice
-               :type elpa
-               :after (lambda ()
-                        (load "color-theme-miami-vice")
-                        (color-theme-miami-vice)))))
+      (:name color-theme-miami-vice
+             :type elpa
+             :after (lambda ()
+                      (load "color-theme-miami-vice")
+                      (color-theme-miami-vice))))
 
 (el-get 'sync)
 
