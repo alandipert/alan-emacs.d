@@ -33,7 +33,6 @@
 
 (require 'package)
 (dolist (archive '(("marmalade" . "http://marmalade-repo.org/packages/")
-                   ("tailrecursion" . "http://tailrecursion.com/~alan/repo/emacs/")
                    ("elpa" . "http://tromey.com/elpa/")))
   (add-to-list 'package-archives archive))
 (package-initialize)
@@ -100,10 +99,6 @@
                         (setq slime-protocol-version 'ignore)
                         (setq font-lock-verbose nil)))
 
-        (:name org-velocity
-               :type http
-               :url "http://repo.or.cz/w/org-mode.git?a=blob_plain;f=contrib/lisp/org-velocity.el")
-        
         (:name find-file-in-project
                :type git
                :url "git://github.com/dburger/find-file-in-project.git"
@@ -133,28 +128,23 @@
                           (global-set-key (kbd "s-t") 'find-file-in-project)
                           (global-set-key (kbd "s-T") 'ffip-toggle-use-project-cache))))
 
-        (:name nyan-mode
-               :type git
-               :url "git://github.com/TeMPOraL/nyan-mode.git"
-               :after (lambda ()
-                        (when window-system
-                          (nyan-mode 't))))
-
         (:name mvnrepl
-               :type elpa
+               :type http
+               :url "https://raw.github.com/gist/8b05e405eae6e7d1b9a0/7b10094bc8bab07c2d86aea2eabf8b1d5132ca2b/mvnrepl.el"
                :after (lambda ()
                         (require 'mvnrepl)))
 
         (:name autopair
                :after (lambda ()
                         (require 'autopair)
-                        (autopair-global-mode))))
+                        (autopair-global-mode)))
 
-      (:name color-theme-miami-vice
-             :type elpa
-             :after (lambda ()
-                      (load "color-theme-miami-vice")
-                      (color-theme-miami-vice))))
+	(:name color-theme-miami-vice
+	       :type http
+	       :url "https://raw.github.com/gist/a1289458f4cc5becab8e/ff4123b5c333c3e16e4af3012446766ecb45fa6b/color-theme-miami-vice.el"
+	       :after (lambda ()
+			(load "color-theme-miami-vice")
+			(color-theme-miami-vice)))))
 
 (el-get 'sync)
 
@@ -278,13 +268,13 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (defun my-non-fullscreen ()
   (interactive)
-	(progn
+  (progn
     (set-frame-parameter nil 'width 82)
     (set-frame-parameter nil 'fullscreen 'fullheight)))
 
 (defun my-fullscreen ()
   (interactive)
-	(set-frame-parameter nil 'fullscreen 'fullboth))
+  (set-frame-parameter nil 'fullscreen 'fullboth))
 
 (defun toggle-fullscreen ()
   (interactive)
