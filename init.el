@@ -2,13 +2,21 @@
 ;; path
 ;;
 
-;; (push "/usr/local/bin" exec-path)
-;; (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+(defcustom exec-paths '("/usr/local/bin" "~/.local/bin")
+  "Directories to be added to exec-path"
+  :type 'string)
 
-(push "/usr/local/bin" exec-path)
-(let ((user-bin "~/.local/bin"))
-  (if (file-exists-p user-bin)
-      (push user-bin exec-path)))
+(defun add-to-path (dir)
+  "Adds a dir to PATH if dir exists."
+  (when (file-exists-p dir)
+    (progn (add-to-list 'exec-path dir)
+           (setenv "PATH" (concat (getenv "PATH") (concat ":" dir))))))
+
+(defun initialize-exec-path ()
+  (interactive)
+  (dolist (dir exec-paths) (add-to-path dir)))
+
+(initialize-exec-path)
 
 ;;
 ;; init el-get, installing if necessary
@@ -92,6 +100,8 @@
         (:name clojure-mode :type elpa
                :after (lambda ()
                         (add-to-list 'auto-mode-alist '("\\.clj.*$" . clojure-mode))))
+
+        (:name slime-repl :type elpa)
 
         (:name slime
                :type elpa
@@ -306,7 +316,6 @@ Goes backward if ARG is negative; error if CHAR not found."
     (setq grep-find-use-xargs 'exec
           ispell-program-name "aspell"
           magit-git-executable "/usr/local/bin/git")
-    (add-to-list 'exec-path "/usr/local/bin")
     (when window-system
       (progn
         (set-frame-font "Menlo-14")
@@ -331,14 +340,41 @@ Goes backward if ARG is negative; error if CHAR not found."
 (defun cljrepl ()
   "Launch a Clojure REPL."
   (interactive)
-  (let* ((clj-jar (concat clj-dir "/clojure.jar")))
+  (let ((clj-jar (concat clj-dir "/clojure.jar")))
     (if (file-exists-p clj-jar)
         (inferior-lisp (concat "java -cp " clj-jar " clojure.main"))
-      (when (yes-or-no-p (concat "clojure.jar not found.  Build?"))
+      (when (yes-or-no-p "clojure.jar not found.  Build?")
         (if (shell-command (concat "cd " clj-dir " && ant"))
             (cljrepl)
           (message "Building Clojure failed."))))))
 
+(defun leinrepl ()
+  "Launch a Leiningen REPL for current file's project. Runs only
+   if lib exists.  Requires cl."
+  (interactive)
+  (if (not (executable-find "lein"))
+      (message "lein command not found.")
+    (labels ((locate-project (file name)
+              ;; adapted from https://github.com/technomancy/emacs-starter-kit/blob/master/dominating-file.el
+                             (let* ((file (abbreviate-file-name file))
+                                    (stop-dir-regexp "\\`\\(?:[\\/][\\/][^\\/]+\\|/\\(?:net\\|afs\\|\\.\\.\\.\\)/\\)\\'")
+                                    (root nil)
+                                    (prev-file file)
+                                    try)
+                               (while (not (or root
+                                               (null file)
+                                               (string-match stop-dir-regexp file)))
+                                 (setq try (file-exists-p (expand-file-name name file)))
+                                 (cond (try (setq root file))
+                                       ((equal file (setq prev-file file
+                                                          file (file-name-directory
+                                                                (directory-file-name file))))
+                                        (setq file nil))))
+                               root)))
+      (let ((project-dir (locate-project buffer-file-name "project.clj")))
+        (if (file-exists-p (concat project-dir "lib"))
+            (inferior-lisp "lein repl")
+          (message "lib directory not found.  Have you run lein deps?"))))))
 ;;
 ;; change font size
 ;;
