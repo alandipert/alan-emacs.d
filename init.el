@@ -47,29 +47,7 @@
 
 ;; local sources
 (setq el-get-sources
-      '(ac-slime
-        auto-complete
-        coffee-mode
-        color-theme
-        dired-details
-        durendal
-        elein
-        el-get
-        haml-mode
-        highlight-parentheses
-        hl-sexp
-        markdown-mode
-        org-mode
-        ruby-block
-        ruby-end
-        ruby-mode
-        sass-mode
-        swank-clojure
-        textile-mode
-        yaml-mode
-        yasnippet
-
-        (:name fuzzy-format
+      '((:name fuzzy-format
                :after (lambda ()
                         (require 'fuzzy-format)
                         (setq fuzzy-format-default-indent-tabs-mode nil)
@@ -156,7 +134,32 @@
 			(load "color-theme-miami-vice")
 			(color-theme-miami-vice)))))
 
-(el-get 'sync)
+(setq my-packages
+      (append
+       '(ac-slime
+         auto-complete
+         coffee-mode
+         color-theme
+         dired-details
+         durendal
+         elein
+         el-get
+         haml-mode
+         highlight-parentheses
+         hl-sexp
+         markdown-mode
+         org-mode
+         ruby-block
+         ruby-end
+         ruby-mode
+         sass-mode
+         swank-clojure
+         textile-mode
+         yaml-mode
+         yasnippet)
+       (mapcar 'el-get-source-name el-get-sources)))
+
+(el-get 'sync my-packages)
 
 (let ((user-custom-file "~/.emacs.d/custom.el"))
   (if (not (file-exists-p user-custom-file))
