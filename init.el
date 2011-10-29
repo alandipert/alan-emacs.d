@@ -125,26 +125,17 @@
         (:name autopair
                :after (lambda ()
                         (require 'autopair)
-                        (autopair-global-mode)))
-
-	(:name color-theme-miami-vice
-	       :type http
-	       :url "https://raw.github.com/gist/a1289458f4cc5becab8e/ff4123b5c333c3e16e4af3012446766ecb45fa6b/color-theme-miami-vice.el"
-	       :after (lambda ()
-			(load "color-theme-miami-vice")
-			(color-theme-miami-vice)))))
+                        (autopair-global-mode)))))
 
 (setq my-packages
       (append
        '(ac-slime
          auto-complete
          coffee-mode
-         color-theme
          dired-details
          durendal
          elein
          el-get
-         haml-mode
          highlight-parentheses
          hl-sexp
          markdown-mode
@@ -152,7 +143,6 @@
          ruby-block
          ruby-end
          ruby-mode
-         sass-mode
          swank-clojure
          textile-mode
          yaml-mode
@@ -304,6 +294,7 @@ Goes backward if ARG is negative; error if CHAR not found."
   (if (not (eq system-type 'darwin))
       (global-set-key (kbd "M-m") 'toggle-fullscreen))
   (progn
+    (load-theme 'tango-dark)
     (set-fringe-style -1)
     (tooltip-mode -1)
     (scroll-bar-mode -1) ; no scroll bars
