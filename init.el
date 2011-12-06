@@ -218,6 +218,7 @@
       (find-file file))))
 
 (global-set-key (kbd "C-x f") 'recentf-ido-find-file)
+(global-set-key (kbd "M-/") 'hippie-expand)
 
 ;;; :set wrapscan emulation
 (defadvice isearch-search (after isearch-no-fail activate)
