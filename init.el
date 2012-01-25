@@ -79,6 +79,10 @@
                :after (lambda ()
                         (add-to-list 'auto-mode-alist '("\\.clj.*$" . clojure-mode))))
 
+        (:name ruby-mode :type elpa
+               :after (lambda ()
+                        (add-to-list 'auto-mode-alist '("\\.rake" . ruby-mode))))
+
         (:name slime-repl :type elpa)
 
         (:name slime
@@ -86,6 +90,11 @@
                :after (lambda ()
                         (setq slime-protocol-version 'ignore)
                         (setq font-lock-verbose nil)))
+
+        (:name dired-details
+               :after (lambda ()
+                        (require 'dired-details)
+                        (dired-details-install)))
 
         (:name find-file-in-project
                :type git
@@ -132,7 +141,6 @@
        '(ac-slime
          auto-complete
          coffee-mode
-         dired-details
          durendal
          elein
          el-get
@@ -142,7 +150,6 @@
          org-mode
          ruby-block
          ruby-end
-         ruby-mode
          swank-clojure
          textile-mode
          yaml-mode
@@ -229,21 +236,11 @@
     (ad-activate 'isearch-search)))
 
 ;;; vim dt emulation
-(defun zap-until-char (arg char)
-  "Kill up to ARGth occurrence of CHAR.
-Case is ignored if `case-fold-search' is non-nil in the current buffer.
-Goes backward if ARG is negative; error if CHAR not found."
-  (interactive "p\ncZap until char: ")
-  (with-no-warnings
-    (if (char-table-p translation-table-for-input)
-        (setq char (or (aref translation-table-for-input char) char))))
-  (kill-region (point)
-               (progn
-                 (search-forward (char-to-string char) nil nil arg)
-                 (1- (point)))
-               (backward-char)))
-
-(global-set-key (kbd "M-z") 'zap-until-char)
+(defadvice zap-to-char (after my-zap-to-char-advice (arg char) activate)
+  "Kill up to the ARG'th occurence of CHAR, and leave CHAR.
+  The CHAR is replaced and the point is put before CHAR."
+  (insert char)
+  (forward-char -1))
 
 ;;; use ibuffer
 ;;; http://martinowen.net/blog/2010/02/tips-for-emacs-ibuffer.html
