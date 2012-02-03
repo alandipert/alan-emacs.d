@@ -258,7 +258,9 @@
 
 (define-key global-map "\C-ca" 'org-agenda)
 (setq org-hide-leading-stars t
-      org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE"))))
+      org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE")))
+      org-todo-keyword-faces
+      '(("ONGOING" . "orange")))
 
 ;;
 ;; linux fullscreen
