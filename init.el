@@ -45,6 +45,7 @@
   (add-to-list 'package-archives archive))
 (package-initialize)
 
+
 ;; local sources
 (setq el-get-sources
       '((:name fuzzy-format
@@ -125,7 +126,17 @@
         (:name autopair
                :after (lambda ()
                         (require 'autopair)
-                        (autopair-global-mode)))))
+                        (autopair-global-mode)))
+
+        (:name ruby-mode
+               :after (lambda ()
+                        (dolist (f '("Capfile"
+                                     "Gemfile"
+                                     "Guardfile"
+                                     "Vagrantfile"
+                                     "config.ru"
+                                     "Rakefile"))
+                          (add-to-list 'auto-mode-alist `(,f . ruby-mode)))))))
 
 (setq my-packages
       (append
