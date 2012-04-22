@@ -1,179 +1,75 @@
 ;;
-;; path
-;;
-
-(defcustom exec-paths '("/usr/local/bin" "~/.local/bin")
-  "Directories to be added to exec-path"
-  :type 'string)
-
-(defun add-to-path (dir)
-  "Adds a dir to PATH if dir exists."
-  (when (file-exists-p dir)
-    (progn (add-to-list 'exec-path dir)
-           (setenv "PATH" (concat (getenv "PATH") (concat ":" dir))))))
-
-(defun initialize-exec-path ()
-  (interactive)
-  (dolist (dir exec-paths) (add-to-path dir)))
-
-(initialize-exec-path)
-
-;;
-;; init el-get, installing if necessary
-;;
-
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-(unless (require 'el-get nil t)
-  (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-   (lambda (s)
-     (end-of-buffer)
-     (eval-print-last-sexp))))
-
-;; stuff we need
-
-(require 'cl)
-(require 'el-get)
-
-;;
-;; packages
+;; package business
 ;;
 
 (require 'package)
-(dolist (archive '(("marmalade" . "http://marmalade-repo.org/packages/")
-                   ("elpa" . "http://tromey.com/elpa/")))
-  (add-to-list 'package-archives archive))
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
 
+(setq my-pkgs
+      '(auto-complete
+        (autopair . (lambda ()
+                      (require 'autopair)
+                      (autopair-global-mode)))
+        clojure-mode
+        clojurescript-mode
+        dired-details
+        (find-file-in-project . (lambda ()
+                                  ;; We don't care about no stinkin' patterns!
+                                  (setq ffip-patterns '("*"))
 
-;; local sources
-(setq el-get-sources
-      '((:name fuzzy-format
-               :after (lambda ()
-                        (require 'fuzzy-format)
-                        (setq fuzzy-format-default-indent-tabs-mode nil)
-                        (global-fuzzy-format-mode t)))
+                                  ;; Do not cache by default.
+                                  (setq ffip-use-project-cache nil)
 
-        (:name magit
-               :after (lambda ()
-                        (global-set-key (kbd "C-x C-z") 'magit-status)))
+                                  (defun ffip-toggle-use-project-cache ()
+                                    "Toggles project file caching for find-file-in-project.el."
+                                    (interactive)
+                                    (setq ffip-use-project-cache (not ffip-use-project-cache))
+                                    (message (concat "Project caching "
+                                                     (if ffip-use-project-cache
+                                                         "enabled."
+                                                       "disabled."))))
 
-        (:name highlight-symbol
-               :after (lambda ()
-                        (highlight-symbol-mode 1)))
+                                  ;; C-x M-f everywhere, Cmd-T on Mac GUI
+                                  ;; Shift-(key) to toggle project caching
+                                  (global-set-key (kbd "C-x M-f") 'find-file-in-project)
+                                  (global-set-key (kbd "C-x M-F") 'ffip-toggle-use-project-cache)
+                                  (when (and (eq system-type 'darwin)
+                                             window-system)
+                                    (global-set-key (kbd "s-t") 'find-file-in-project)
+                                    (global-set-key (kbd "s-T") 'ffip-toggle-use-project-cache))))
+        magit
+        (paredit . (lambda ()
+                     (let ((paredit-modes '(clojure
+                                            emacs-lisp
+                                            lisp
+                                            lisp-interaction
+                                            ielm)))
+                       (dolist (mode paredit-modes)
+                         (add-hook (intern (concat (symbol-name mode) "-mode-hook"))
+                                   (lambda ()
+                                     (paredit-mode +1)
+                                     ;; a binding that works in the terminal
+                                     (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))))))
+        markdown-mode
+        coffee-mode
+        hl-sexp))
 
-        (:name paredit
-               :after (lambda ()
-                        (let ((paredit-modes '(clojure
-                                               emacs-lisp
-                                               lisp
-                                               lisp-interaction
-                                               ielm)))
-                          (dolist (mode paredit-modes)
-                            (add-hook (intern (concat (symbol-name mode) "-mode-hook"))
-                                      (lambda () (paredit-mode +1)))))
+(defun install-idempotent (name)
+  (when (not (package-installed-p name))
+    (package-install name)))
 
-                        ;; a binding that works in the terminal
-                        (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))
+(defun my-install (pkgs)
+  (dolist (pkg pkgs)
+    (if (symbolp pkg)
+        (install-idempotent pkg)
+      (let ((name (car pkg))
+            (after (eval (cdr pkg))))
+        (install-idempotent name)
+        (funcall after)))))
 
-        (:name clojure-mode :type elpa
-               :after (lambda ()
-                        (add-to-list 'auto-mode-alist '("\\.clj.*$" . clojure-mode))))
-
-        (:name ruby-mode :type elpa
-               :after (lambda ()
-                        (add-to-list 'auto-mode-alist '("\\.rake" . ruby-mode))))
-
-        (:name slime-repl :type elpa)
-
-        (:name slime
-               :type elpa
-               :after (lambda ()
-                        (setq slime-protocol-version 'ignore)
-                        (setq font-lock-verbose nil)))
-
-        (:name dired-details
-               :after (lambda ()
-                        (require 'dired-details)
-                        (dired-details-install)))
-
-        (:name find-file-in-project
-               :type git
-               :url "git://github.com/dburger/find-file-in-project.git"
-               :after (lambda ()
-
-                        ;; We don't care about no stinkin' patterns!
-                        (setq ffip-patterns '("*"))
-
-                        ;; Do not cache by default.
-                        (setq ffip-use-project-cache nil)
-
-                        (defun ffip-toggle-use-project-cache ()
-                          "Toggles project file caching for find-file-in-project.el."
-                          (interactive)
-                          (setq ffip-use-project-cache (not ffip-use-project-cache))
-                          (message (concat "Project caching "
-                                           (if ffip-use-project-cache
-                                               "enabled."
-                                             "disabled."))))
-
-                        ;; C-x M-f everywhere, Cmd-T on Mac GUI
-                        ;; Shift-(key) to toggle project caching
-                        (global-set-key (kbd "C-x M-f") 'find-file-in-project)
-                        (global-set-key (kbd "C-x M-F") 'ffip-toggle-use-project-cache)
-                        (when (and (eq system-type 'darwin)
-                                   window-system)
-                          (global-set-key (kbd "s-t") 'find-file-in-project)
-                          (global-set-key (kbd "s-T") 'ffip-toggle-use-project-cache))))
-
-        (:name mvnrepl
-               :type http
-               :url "https://raw.github.com/gist/8b05e405eae6e7d1b9a0/7b10094bc8bab07c2d86aea2eabf8b1d5132ca2b/mvnrepl.el"
-               :after (lambda ()
-                        (require 'mvnrepl)))
-
-        (:name autopair
-               :after (lambda ()
-                        (require 'autopair)
-                        (autopair-global-mode)))
-
-        (:name ruby-mode
-               :after (lambda ()
-                        (dolist (f '("Capfile"
-                                     "Gemfile"
-                                     "Guardfile"
-                                     "Vagrantfile"
-                                     "config.ru"
-                                     "Rakefile"))
-                          (add-to-list 'auto-mode-alist `(,f . ruby-mode)))))))
-
-(setq my-packages
-      (append
-       '(ac-slime
-         auto-complete
-         coffee-mode
-         durendal
-         elein
-         el-get
-         highlight-parentheses
-         hl-sexp
-         markdown-mode
-         org-mode
-         ruby-block
-         ruby-end
-         swank-clojure
-         textile-mode
-         yaml-mode
-         yasnippet)
-       (mapcar 'el-get-source-name el-get-sources)))
-
-(el-get 'sync my-packages)
-
-(let ((user-custom-file "~/.emacs.d/custom.el"))
-  (if (not (file-exists-p user-custom-file))
-      (shell-command (concat "touch " user-custom-file)))
-  (setq custom-file user-custom-file)
-  (load custom-file))
+(my-install my-pkgs)
 
 ;;
 ;; visual settings
@@ -188,8 +84,6 @@
 
 (line-number-mode 1) ; have line numbers and
 (column-number-mode 1) ; column numbers in the mode line
-(when (boundp 'tool-bar-mode)
-  (tool-bar-mode -1)) ; no tool bar with icons
 (global-linum-mode 1) ; add line numbers on the left
 (setq linum-format "%d  ") ; throw a bit of padding on there
 (setq visible-bell t)
@@ -305,6 +199,8 @@
   (if (not (eq system-type 'darwin))
       (global-set-key (kbd "M-m") 'toggle-fullscreen))
   (progn
+    (when (boundp 'tool-bar-mode)
+      (tool-bar-mode -1)) ; no tool bar with icons
     (load-theme 'tango-dark)
     (set-fringe-style -1)
     (tooltip-mode -1)
@@ -360,7 +256,7 @@
   (if (not (executable-find "lein"))
       (message "lein command not found.")
     (labels ((locate-project (file name)
-              ;; adapted from https://github.com/technomancy/emacs-starter-kit/blob/master/dominating-file.el
+                             ;; adapted from https://github.com/technomancy/emacs-starter-kit/blob/master/dominating-file.el
                              (let* ((file (abbreviate-file-name file))
                                     (stop-dir-regexp "\\`\\(?:[\\/][\\/][^\\/]+\\|/\\(?:net\\|afs\\|\\.\\.\\.\\)/\\)\\'")
                                     (root nil)
@@ -380,6 +276,7 @@
         (if (file-exists-p (concat project-dir "lib"))
             (inferior-lisp "lein repl")
           (message "lib directory not found.  Have you run lein deps?"))))))
+
 ;;
 ;; change font size
 ;;
