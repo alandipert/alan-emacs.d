@@ -310,3 +310,38 @@
 (put 'downcase-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 (put 'set-goal-column 'disabled nil)
+
+;;
+;; mvnrepl
+;;
+
+(defgroup mvnrepl nil
+  "run mvn clojure:repl from emacs"
+  :prefix "mvnrepl-"
+  :group 'applications)
+
+(defcustom mvnrepl-mvn "mvn"
+  "Maven 'mvn' command."
+  :type 'string
+  :group 'mvnrepl)
+
+(defun mvnrepl-project-root ()
+  "Look for pom.xml file to find project root."
+  (let ((cwd default-directory)
+        (found nil)
+        (max 10))
+    (while (and (not found) (> max 0))
+      (if (file-exists-p (concat cwd "pom.xml"))
+        (setq found cwd)
+        (setq cwd (concat cwd "../") max (- max 1))))
+    (and found (expand-file-name found))))
+
+(defun mvnrepl ()
+  "From a buffer with a file in the project open, run M-x mvn-repl to get a project inferior-lisp"
+  (interactive)
+  (let ((project-root (mvnrepl-project-root)))
+    (if project-root
+	(inferior-lisp (concat mvnrepl-mvn " -f " project-root "/pom.xml clojure:repl"))
+      (message (concat "Maven project not found.")))))
+
+(provide 'mvnrepl)
