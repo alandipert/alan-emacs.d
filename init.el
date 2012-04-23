@@ -57,19 +57,35 @@
         hl-sexp))
 
 (defun install-idempotent (name)
+  "Install package name unless already installed."
   (when (not (package-installed-p name))
     (package-install name)))
 
-(defun my-install (pkgs)
-  (dolist (pkg pkgs)
-    (if (symbolp pkg)
-        (install-idempotent pkg)
-      (let ((name (car pkg))
-            (after (eval (cdr pkg))))
-        (install-idempotent name)
-        (funcall after)))))
+(defun pkg-name (pkg)
+  "Given a pair or symbol, return a symbol."
+  (if (symbolp pkg) pkg (car pkg)))
 
-(my-install my-pkgs)
+(defun install-stuff (pkgs)
+  "Spin through pkgs list and install every package."
+  (package-refresh-contents)
+  (dolist (pkg pkgs)
+    (install-idempotent (pkg-name pkg))))
+
+(defun config-stuff (pkgs)
+  "Spin through my pkgs list and run each configuration function."
+  (dolist (pkg pkgs)
+    (when (not (symbolp pkg))
+      (funcall (eval (cdr pkg))))))
+
+(defun doit (pkgs)
+  "Install packages if they haven't been, and run their
+configuration lambdas."
+  (when (not (package-installed-p (pkg-name (last pkgs))))
+    (install-stuff pkgs))
+  (config-stuff pkgs))
+
+;;; doit
+(doit my-pkgs)
 
 ;;
 ;; visual settings
