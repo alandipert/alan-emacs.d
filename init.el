@@ -56,9 +56,13 @@
         coffee-mode
         hl-sexp))
 
+(defmacro when-not (test &rest body)
+  `(when (not ,test)
+     ,@body))
+
 (defun install-idempotent (name)
   "Install package name unless already installed."
-  (when (not (package-installed-p name))
+  (when-not (package-installed-p name)
     (package-install name)))
 
 (defun pkg-name (pkg)
@@ -74,13 +78,13 @@
 (defun config-stuff (pkgs)
   "Spin through my pkgs list and run each configuration function."
   (dolist (pkg pkgs)
-    (when (not (symbolp pkg))
+    (when-not (symbolp pkg)
       (funcall (eval (cdr pkg))))))
 
 (defun doit (pkgs)
   "Install packages if they haven't been, and run their
 configuration lambdas."
-  (when (not (package-installed-p (pkg-name (last pkgs))))
+  (when-not (package-installed-p (pkg-name (last pkgs)))
     (install-stuff pkgs))
   (config-stuff pkgs))
 
