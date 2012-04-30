@@ -54,7 +54,10 @@
                                      (define-key paredit-mode-map (kbd "M-)") 'paredit-forward-slurp-sexp)))))))
         markdown-mode
         coffee-mode
-        hl-sexp))
+        hl-sexp
+        slim-mode
+        (scss-mode . (lambda ()
+                       (scss-compile-at-save nil)))))
 
 (defun install-idempotent (name)
   "Install package name unless already installed."
@@ -127,6 +130,13 @@ configuration lambdas."
 (menu-bar-mode 0)
 
 ;;
+;; custom.el
+;;
+
+(setq custom-file "~/.emacs.d/custom.el")
+(load custom-file)
+
+;;
 ;; creature comforts
 ;;
 
@@ -183,6 +193,7 @@ configuration lambdas."
       org-todo-keywords (quote ((sequence "TODO" "ONGOING" "DONE")))
       org-todo-keyword-faces
       '(("ONGOING" . "orange")))
+(org-src-window-setup 'current-window)
 
 ;;
 ;; linux fullscreen
