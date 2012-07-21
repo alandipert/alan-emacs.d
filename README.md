@@ -1,6 +1,6 @@
 ### Prepare
 
-* Emacs 24, GUI or CLI, on Mac or Linux
+* Emacs 24, GUI or CLI, on Linux
   * For obtaining Emacs, see https://github.com/technomancy/emacs-starter-kit
 
 ### Install
