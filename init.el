@@ -23,6 +23,7 @@
     hl-sexp
     magit
     markdown-mode
+    monokai-theme
     nrepl
     org
     paredit
@@ -167,7 +168,7 @@
 (when window-system
   (global-set-key (kbd "M-m") 'toggle-fullscreen)
   (if (boundp 'tool-bar-mode) (tool-bar-mode -1))
-  (load-theme 'tango-dark)
+  (load-theme 'monokai)
   (set-fringe-style -1)
   (tooltip-mode -1)
   (scroll-bar-mode -1)
