@@ -27,7 +27,8 @@
     nrepl
     org
     paredit
-    ruby-mode))
+    ruby-mode
+    zen-and-art-theme))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
@@ -165,15 +166,17 @@
 ;; window-system specific
 ;;
 
-(when window-system
-  (global-set-key (kbd "M-m") 'toggle-fullscreen)
-  (if (boundp 'tool-bar-mode) (tool-bar-mode -1))
-  (load-theme 'monokai)
-  (set-fringe-style -1)
-  (tooltip-mode -1)
-  (scroll-bar-mode -1)
-  (modify-frame-parameters (selected-frame)
-                           (list (cons 'cursor-type 'hollow))))
+(if window-system
+    (progn
+      (global-set-key (kbd "M-m") 'toggle-fullscreen)
+      (if (boundp 'tool-bar-mode) (tool-bar-mode -1))
+      (load-theme 'monokai)
+      (set-fringe-style -1)
+      (tooltip-mode -1)
+      (scroll-bar-mode -1)
+      (modify-frame-parameters (selected-frame)
+                               (list (cons 'cursor-type 'hollow))))
+  (load-theme 'zen-and-art))
 
 ;;
 ;; lisp jockeying
@@ -292,7 +295,8 @@
     emacs-lisp
     lisp
     lisp-interaction
-    ielm))
+    ielm
+    repl))
 
 (dolist (mode paredit-modes)
   (add-hook (intern (concat (symbol-name mode) "-mode-hook"))
