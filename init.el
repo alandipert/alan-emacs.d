@@ -274,7 +274,8 @@
 ;;; find-file-in-project
 
 (setq ffip-patterns '("*")
-      ffip-use-project-cache nil)
+      ffip-use-project-cache nil
+      ffip-project-file '("project.clj" ".git"))
 
 (defun ffip-toggle-use-project-cache ()
   "Toggles project file caching for find-file-in-project.el."
