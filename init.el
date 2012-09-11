@@ -50,7 +50,8 @@
 (column-number-mode 1)
 (global-linum-mode 1)
 
-(load-theme 'monokai)
+;;; Load theme without confirmation
+(load-theme 'monokai t)
 
 (setq mode-line
       '((t (:background "magenta" :foreground "black" :box (:line-width -1 :style released-button))))
