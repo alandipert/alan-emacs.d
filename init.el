@@ -53,11 +53,11 @@
 (load-theme 'monokai)
 
 (setq mode-line
-      ((t (:background "magenta" :foreground "black" :box (:line-width -1 :style released-button))))
+      '((t (:background "magenta" :foreground "black" :box (:line-width -1 :style released-button))))
       show-paren-match
-      ((t (:background "gold" :foreground "black")))
+      '((t (:background "gold" :foreground "black")))
       show-paren-mismatch
-      ((t (:background "medium violet red" :foreground "white"))))
+      '((t (:background "medium violet red" :foreground "white"))))
 
 ;;
 ;; quirk fixes, behaviors
