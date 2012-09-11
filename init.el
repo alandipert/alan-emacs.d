@@ -16,6 +16,7 @@
     auto-complete
     auto-indent-mode
     clojure-mode
+    clojure-test-mode
     clojurescript-mode
     dired-details
     find-file-in-project
@@ -48,6 +49,15 @@
 (line-number-mode 1)
 (column-number-mode 1)
 (global-linum-mode 1)
+
+(load-theme 'monokai)
+
+(setq mode-line
+      ((t (:background "magenta" :foreground "black" :box (:line-width -1 :style released-button))))
+      show-paren-match
+      ((t (:background "gold" :foreground "black")))
+      show-paren-mismatch
+      ((t (:background "medium violet red" :foreground "white"))))
 
 ;;
 ;; quirk fixes, behaviors
@@ -171,13 +181,11 @@
     (progn
       (global-set-key (kbd "M-m") 'toggle-fullscreen)
       (if (boundp 'tool-bar-mode) (tool-bar-mode -1))
-      (load-theme 'monokai)
       (set-fringe-style -1)
       (tooltip-mode -1)
       (scroll-bar-mode -1)
       (modify-frame-parameters (selected-frame)
-                               (list (cons 'cursor-type 'hollow))))
-  (load-theme 'zen-and-art))
+                               (list (cons 'cursor-type 'hollow)))))
 
 ;;
 ;; lisp jockeying
