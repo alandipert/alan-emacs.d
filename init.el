@@ -186,7 +186,8 @@
       (tooltip-mode -1)
       (scroll-bar-mode -1)
       (modify-frame-parameters (selected-frame)
-                               (list (cons 'cursor-type 'hollow)))))
+                               (list (cons 'cursor-type 'hollow))))
+  (set-face-background 'default "nil"))
 
 ;;
 ;; lisp jockeying
