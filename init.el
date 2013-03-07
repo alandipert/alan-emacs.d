@@ -51,7 +51,7 @@
 (line-number-mode 1)
 (column-number-mode 1)
 (global-linum-mode 1)
-(global-rainbow-delimiters-mode 1))
+(global-rainbow-delimiters-mode 1)
 
 ;;; Load theme without confirmation
 (load-theme 'cyberpunk t)
