@@ -3,8 +3,9 @@
 ;;
 
 (require 'package)
-(add-to-list 'package-archives
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(dolist (repo '(("marmalade" . "http://marmalade-repo.org/packages/")
+                ("melpa" . "http://melpa.milkbox.net/packages/")))
+  (add-to-list 'package-archives repo))
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -18,16 +19,17 @@
     clojure-mode
     clojure-test-mode
     clojurescript-mode
+    cyberpunk-theme
     dired-details
     find-file-in-project
     go-mode
     hl-sexp
     magit
     markdown-mode
-    monokai-theme
     nrepl
     org
     paredit
+    rainbow-delimiters
     ruby-mode
     zen-and-art-theme))
 
@@ -49,9 +51,10 @@
 (line-number-mode 1)
 (column-number-mode 1)
 (global-linum-mode 1)
+(global-rainbow-delimiters-mode 1))
 
 ;;; Load theme without confirmation
-(load-theme 'monokai t)
+(load-theme 'cyberpunk t)
 
 (setq mode-line
       '((t (:background "magenta" :foreground "black" :box (:line-width -1 :style released-button))))
