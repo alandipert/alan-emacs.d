@@ -15,23 +15,18 @@
   '(ac-slime
     align-cljlet
     auto-complete
-    auto-indent-mode
     clojure-mode
-    clojure-test-mode
     clojurescript-mode
-    cyberpunk-theme
+    monokai-theme
     dired-details
     find-file-in-project
-    go-mode
-    hl-sexp
     magit
     markdown-mode
-    nrepl
+    cider
     org
     paredit
-    rainbow-delimiters
-    ruby-mode
-    zen-and-art-theme))
+    highlight-symbol
+    rainbow-delimiters))
 
 (dolist (p my-packages)
   (when (not (package-installed-p p))
@@ -52,9 +47,10 @@
 (column-number-mode 1)
 (global-linum-mode 1)
 (global-rainbow-delimiters-mode 1)
+(winner-mode 1)
 
 ;;; Load theme without confirmation
-(load-theme 'cyberpunk t)
+(load-theme 'monokai t)
 
 (setq mode-line
       '((t (:background "magenta" :foreground "black" :box (:line-width -1 :style released-button))))
@@ -75,19 +71,13 @@
       auto-save-default nil
       diff-switches "-u -w"
       whitespace-style '(trailing lines space-before-tab
-                                  face indentation space-after-tab)
-      auto-indent-modes '(ruby-mode
-                          java-mode
-                          javascript-mode
-                          emacs-lisp-mode))
+                         face indentation space-after-tab))
 
 (setq-default tab-width 2
               indent-tabs-mode nil
               c-basic-offset 2
+              sh-basic-offset 2
               js-indent-level 2)
-
-(dolist (mode auto-indent-modes)
-  (add-hook (intern (format "%s-hook" mode)) 'auto-indent-minor-mode))
 
 (fset 'yes-or-no-p 'y-or-n-p)
 (delete-selection-mode t)
@@ -213,6 +203,27 @@
           (message "Building Clojure failed."))))))
 
 ;;
+;; gherkin stuff
+;;
+
+(defgroup gkrepl nil
+  "run gherkin -r from emacs"
+  :prefix "gkrepl-"
+  :group 'applications)
+
+(defcustom gkrepl-gherkin "gherkin"
+  "Path to gherkin script"
+  :type 'string
+  :group 'gkrepl)
+
+(defun gkrepl ()
+  "Launch a gherkin REPL."
+  (interactive)
+  (inferior-lisp (concat gkrepl-gherkin " -r")))
+
+(add-to-list 'auto-mode-alist '("\\.gk\\'" . clojure-mode))
+
+;;
 ;; change font size
 ;;
 
@@ -329,109 +340,3 @@
           '(lambda ()
              (ibuffer-auto-mode 1)
              (ibuffer-switch-to-saved-filter-groups "home")))
-
-;;; misc
-
-(defvar slime-words-of-encouragement
-  `("When eating an elephant, take one bite at a time."
-    "A memorandum is written not to inform the reader but to protect the writer."
-    "Power tends to corrupt; absolute power corrupts absolutely."
-    "Anybody can win -- unless there happens to be a second entry."
-    "When the plane you are on is late, the plane you want to transfer to is on time."
-    "Social innovations tend to the level of minimum tolerable well being."
-    "Almost anything is easier to get into than out of."
-    "I'd rather have a free bottle in front of me than a prefrontal lobotomy."
-    "Justice always prevails ... three times out of seven."
-    "Attila the Hun came from a broken home."
-    "Don't force it, get a larger hammer."
-    "Those whose approval you seek the most give you the least."
-    "What the gods get away with, the cows don't."
-    "Any order that can be misunderstood has been misunderstood."
-    "If it moves, salute it; if it doesn't move, pick it up; if you can't pick it up, paint it."
-    "It's always the wrong time of the month."
-    "No books are lost by loaning except those you particularly wanted to keep."
-    "If it can be borrowed and it can be broken, you will borrow it and you will break it."
-    "When you are over the hill, you pick up speed."
-    "Misery no longer loves company.  Nowadays it insists on it."
-    "Some of it plus the rest of it is all of it."
-    "The more ridiculous a belief system, the higher the probability of its success."
-    "Old age is always fifteen years older than I am."
-    "When you're up to your nose, keep your mouth shut."
-    "All people are cremated equal."
-    "all ignorance toboggans into know"
-    "It is much harder to find a job than to keep one."
-    "The ratio of time involved in work to time available for work is usually about 0.6."
-    "No matter which way you ride, it's uphill and against the wind."
-    "The conclusions of most good operations research studies are obvious."
-    "Live within your income, even if you have to borrow to do so."
-    "Established technology tends to persist in spite of new technology."
-    "If you want your name spelled wrong, die."
-    "If you think education is expensive -- try ignorance."
-    "If you're feeling good, don't worry.  You'll get over it."
-    "Never go to a doctor whose office plants have died."
-    "In any household, junk accumulates to fill the space available for its storage."
-    "An ounce of application is worth a ton of abstraction."
-    "The conventional wisdom is that power is an aphrodisiac. In truth, it's exhausting."
-    "You always find something the last place you look."
-    "A bird in the hand is dead."
-    "If everything seems to be coming your way, you're probably in the wrong lane."
-    "It's always the partner's fault."
-    "Never offend people with style when you can offend them with substance."
-    "Our customer's paperwork is profit.  Our own paperwork is loss."
-    "At any level of traffic, any delay is intolerable."
-    "As the economy gets better, everything else gets worse."
-    "Nothing is ever accomplished by a reasonable man."
-    "VM systems programmers do it virtually all the time."
-    "Overdoing things is harmful in all cases, even when it comes to efficiency."
-    "If the assumptions are wrong, the conclusions aren't likely to be very good."
-    "When all else fails, read the instructions."
-    "A coup that is known in advance is a coup that does not take place."
-    "Nature abhors a vacuous experimenter."
-    "It's morally wrong to allow suckers to keep their money."
-    "A Smith and Wesson beats four aces."
-    "The leak in the roof is never in the same location as the drip."
-    "If it's in stock, we have it!"
-    "All kookies are not in a jar."
-    "People don't change; they only become more so."
-    "In matters of dispute, the bank's balance is always smaller than yours."
-    "Nothing ever gets built on schedule or within budget."
-    "I have seen the truth and it makes no sense."
-    "If your next pot of chili tastes better, it probably is because of something left out, rather than added."
-    "When things are going well, something will go wrong."
-    "The other line moves faster."
-    "Necessity is the mother of strange bedfellows."
-    "Never, ever, play leapfrog with a unicorn."
-    "Whoever has the gold makes the rules."
-    "There's no such thing as a small whiskey."
-    "One good turn gets most of the blanket."
-    "Chicken Little only has to be right once."
-    "If a project is not worth doing at all, it is not worth doing well."
-    "Inside every large problem there is a small problem struggling to get out."
-    "A collision at sea can ruin your entire day."
-    "Every man has a scheme that will not work."
-    "If they give you ruled paper, write the other way."
-    "Friends may come and go, but enemies accumulate."
-    "Mahr's Law of Restrained Involvement: Don't get any on you."
-    "If the facts do not conform to the theory, they must be discarded."
-    "Kickbacks must always exceed bribes."
-    "Left to themselves, things tend to go from bad to worse."
-    "Every solution breeds new problems."
-    "Nature always sides with the hidden flaw."
-    "Mother nature is a bitch."
-    "If you fool around with a thing for very long,"
-    "you will screw it up."
-    "Fixing a thing takes longer and costs more than you thought."
-    "No amount of genius can overcome a preoccupation for detail."
-    "Complex problems have simple, easy-to-understand wrong answers."
-    "As the economy gets better, everything else gets worse."
-    "Most jobs are marginally better than daytime TV."
-    "Any given program, when running, is obsolete"
-    "A ship on the beach is a lighthouse to the sea."
-    "A man with one watch knows what time it is.  A man with two watches is never sure."
-    "An object will fall so as to do the most damage."
-    "Badness comes in waves."
-    "THINK!"
-    "Anything important loses its value soon after being Xeroxed."
-    "The insult of an enemy is better then the flattery of a friend."
-    "Law of Cybernetic Entomology: There's always one more bug.")
-  "Scientifically-proven optimal words of hackerish encouragement.")
