@@ -20,6 +20,7 @@
     monokai-theme
     dired-details
     find-file-in-project
+    gherkin-mode
     magit
     markdown-mode
     cider
