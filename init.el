@@ -50,9 +50,6 @@
 (global-rainbow-delimiters-mode 1)
 (winner-mode 1)
 
-;;; Load theme without confirmation
-(load-theme 'monokai t)
-
 (setq mode-line
       '((t (:background "magenta" :foreground "black" :box (:line-width -1 :style released-button))))
       show-paren-match
@@ -180,7 +177,8 @@
       (tooltip-mode -1)
       (scroll-bar-mode -1)
       (modify-frame-parameters (selected-frame)
-                               (list (cons 'cursor-type 'hollow))))
+                               (list (cons 'cursor-type 'hollow)))
+      (load-theme 'monokai t))
   (set-face-background 'default "nil"))
 
 ;;
@@ -204,6 +202,30 @@
           (message "Building Clojure failed."))))))
 
 ;;
+;; hlisp
+;;
+
+(add-to-list 'auto-mode-alist '("\\.cljs.hl\\'" . clojurescript-mode))
+
+(setq html5-elements
+      '(a abbr acronym address applet area article aside audio b base basefont
+        bdi bdo big blockquote body br button canvas caption center cite code
+        col colgroup command data datalist dd del details dfn dir div dl
+        dt em embed eventsource fieldset figcaption figure font footer form frame frameset
+        h1 h2 h3 h4 h5 h6 head header hgroup hr html i
+        iframe img input ins isindex kbd keygen label legend li link html-map
+        mark menu html-meta meter nav noframes noscript object ol optgroup
+        option output p param pre progress q rp rt ruby
+        s p samp script section select small source span strike strong style sub
+        summary sup table tbody td textarea tfoot th thead html-time
+        title tr track tt u ul html-var video wbr))
+
+(add-hook 'clojurescript-mode-hook
+          '(lambda ()
+             (dolist (el html5-elements)
+               (put-clojure-indent el 'defun))))
+
+;;
 ;; gherkin stuff
 ;;
 
@@ -222,7 +244,9 @@
   (interactive)
   (inferior-lisp (concat gkrepl-gherkin " -r")))
 
-(add-to-list 'auto-mode-alist '("\\.gk\\'" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.gk\\'" . gherkin-mode))
+(add-to-list 'auto-mode-alist '("\\.boot\\'" . clojure-mode))
+(add-to-list 'auto-mode-alist '("\\.html.hl\\'" . html-mode))
 
 ;;
 ;; change font size
@@ -319,6 +343,7 @@
 
 (defvar paredit-modes
   '(clojure
+    gherkin
     emacs-lisp
     lisp
     lisp-interaction
